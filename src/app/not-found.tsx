@@ -10,10 +10,10 @@ export default function NotFound() {
           The page you&apos;re looking for doesn&apos;t exist or has been moved.
         </p>
         <div className="error-page-actions">
-          <Link href="/" className="btn btn-primary" style={{ width: "auto" }}>
+          <Link href="/" className="btn btn-primary w-auto">
             Go home
           </Link>
-          <Link href="/login" className="btn btn-ghost" style={{ width: "auto" }}>
+          <Link href="/login" className="btn btn-ghost w-auto">
             Sign in
           </Link>
         </div>

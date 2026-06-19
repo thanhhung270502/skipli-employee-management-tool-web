@@ -82,7 +82,7 @@ export function TasksPage() {
       <div>
         <div className="page-header">
           <div>
-            <Skeleton width={120} height={32} style={{ marginBottom: 8 }} />
+            <Skeleton width={120} height={32} className="mb-2" />
             <Skeleton width={180} height={16} />
           </div>
         </div>
@@ -101,26 +101,24 @@ export function TasksPage() {
           </p>
         </div>
         <button
-          className="btn btn-primary"
+          className="btn btn-primary w-auto"
           onClick={() => {
             setEditingTask(null);
             reset();
             setModalOpen(true);
           }}
-          style={{ width: "auto" }}
         >
           <Plus size={16} /> Create Task
         </button>
       </div>
 
       {/* Filter Tabs */}
-      <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
+      <div className="flex gap-2 mb-6 flex-wrap">
         {(["all", "pending", "in_progress", "done"] as const).map((f) => (
           <button
             key={f}
-            className={`btn btn-sm ${filter === f ? "btn-secondary" : "btn-ghost"}`}
+            className={`btn btn-sm w-auto capitalize ${filter === f ? "btn-secondary" : "btn-ghost"}`}
             onClick={() => setFilter(f)}
-            style={{ width: "auto", textTransform: "capitalize" }}
           >
             {f === "in_progress" ? "In Progress" : f}{" "}
             {f === "all"
@@ -142,19 +140,18 @@ export function TasksPage() {
           </p>
           <p className="empty-state-desc">Create a task and assign it to an employee</p>
           <button
-            className="btn btn-primary"
+            className="btn btn-primary w-auto mt-4"
             onClick={() => {
               setEditingTask(null);
               reset();
               setModalOpen(true);
             }}
-            style={{ width: "auto", marginTop: 16 }}
           >
             <Plus size={16} /> Create Task
           </button>
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div className="flex flex-col gap-3">
           {filtered.map((task, i) => (
             <TaskCard key={task.id} task={task} index={i} onEdit={() => handleEditClick(task)} />
           ))}

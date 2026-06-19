@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { CheckCircle, Clock, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import type { TaskObject } from "@/common/models/task";
+import { Badge } from "@/shared/components";
+
 
 interface EmployeeTaskCardProps {
   task: TaskObject;
@@ -52,59 +54,44 @@ export function EmployeeTaskCard({
   if (task.status === "done") {
     return (
       <motion.div
-        className="card"
+        className="card flex items-start gap-4 opacity-70"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: index * 0.04 }}
-        style={{ display: "flex", alignItems: "flex-start", gap: 16, opacity: 0.7 }}
       >
         <div
-          style={{
-            width: 20,
-            height: 20,
-            borderRadius: "50%",
-            flexShrink: 0,
-            marginTop: 2,
-            background: "var(--success)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
+          className="w-5 h-5 rounded-full shrink-0 mt-0.5 bg-[var(--success)] flex items-center justify-center"
         >
-          <CheckCircle size={12} style={{ color: "white" }} />
+          <CheckCircle size={12} className="text-white" />
         </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 4 }}>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2.5 flex-wrap mb-1">
             <h3
-              style={{
-                fontSize: 15,
-                fontWeight: 600,
-                color: "var(--text-secondary)",
-                textDecoration: "line-through",
-              }}
+              className="text-[15px] font-semibold text-[var(--text-secondary)] line-through"
             >
               {task.title}
             </h3>
-            <span
-              className={`badge ${
+            <Badge
+              variant={
                 task.priority === "high"
-                  ? "badge-danger"
+                  ? "danger"
                   : task.priority === "medium"
-                  ? "badge-purple"
-                  : "badge-neutral"
-              }`}
-              style={{ textTransform: "capitalize", opacity: 0.7 }}
+                  ? "purple"
+                  : "neutral"
+              }
+              className="capitalize opacity-70"
             >
               {task.priority || "medium"}
-            </span>
+            </Badge>
           </div>
           {completedAt && (
-            <span style={{ fontSize: 12, color: "var(--success)" }}>
+            <span className="text-xs text-[var(--success)]">
               ✓ Completed {format(completedAt, "MMM d, yyyy")}
             </span>
           )}
         </div>
-        <span className="badge badge-success">Done</span>
+        <Badge variant="success">Done</Badge>
+
       </motion.div>
     );
   }
@@ -113,65 +100,50 @@ export function EmployeeTaskCard({
 
   return (
     <motion.div
-      className="card"
+      className="card flex items-start gap-4"
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.06 }}
-      style={{ display: "flex", alignItems: "flex-start", gap: 16 }}
     >
       <div
-        style={{
-          width: 20,
-          height: 20,
-          borderRadius: "50%",
-          flexShrink: 0,
-          marginTop: 2,
-          border: `2px solid ${isInProgress ? "var(--info)" : "var(--warning)"}`,
-          background: "transparent",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
+        className={`w-5 h-5 rounded-full shrink-0 mt-0.5 border-2 bg-transparent flex items-center justify-center ${
+          isInProgress ? "border-[var(--info)]" : "border-[var(--warning)]"
+        }`}
       >
-        <Clock size={10} style={{ color: isInProgress ? "var(--info)" : "var(--warning)" }} />
+        <Clock size={10} className={isInProgress ? "text-[var(--info)]" : "text-[var(--warning)]"} />
       </div>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 4 }}>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2.5 flex-wrap mb-1">
           <h3
-            style={{ fontSize: 15, fontWeight: 600, color: "var(--text-primary)" }}
+            className="text-[15px] font-semibold text-[var(--text-primary)]"
           >
             {task.title}
           </h3>
-          <span
-            className={`badge ${
+          <Badge
+            variant={
               task.priority === "high"
-                ? "badge-danger"
+                ? "danger"
                 : task.priority === "medium"
-                ? "badge-purple"
-                : "badge-neutral"
-            }`}
-            style={{ textTransform: "capitalize" }}
+                ? "purple"
+                : "neutral"
+            }
+            className="capitalize"
           >
             {task.priority || "medium"}
-          </span>
+          </Badge>
           {isInProgress && (
-            <span className="badge badge-info">In Progress</span>
+            <Badge variant="info">In Progress</Badge>
           )}
         </div>
+
         {task.description && (
-          <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 8 }}>
+          <p className="text-[13px] text-[var(--text-secondary)] mb-2">
             {task.description}
           </p>
         )}
         {dueDate && (
           <span
-            style={{
-              fontSize: 12,
-              color: "var(--text-muted)",
-              display: "flex",
-              alignItems: "center",
-              gap: 4,
-            }}
+            className="text-xs text-[var(--text-muted)] flex items-center gap-1"
           >
             <Calendar size={11} />
             Due {format(dueDate, "MMM d, yyyy")}
@@ -180,14 +152,13 @@ export function EmployeeTaskCard({
       </div>
       {isInProgress ? (
         <button
-          className="btn btn-success btn-sm"
-          style={{ width: "auto", flexShrink: 0 }}
+          className="btn btn-success btn-sm w-auto shrink-0"
           onClick={() => onMarkDone(task.id)}
           disabled={isUpdating}
         >
           {isUpdating ? (
             <>
-              <span className="spinner" style={{ width: 14, height: 14, borderWidth: 2 }} />
+              <span className="spinner w-3.5 h-3.5 border-2" />
               Updating...
             </>
           ) : (
@@ -198,14 +169,13 @@ export function EmployeeTaskCard({
         </button>
       ) : (
         <button
-          className="btn btn-secondary btn-sm"
-          style={{ width: "auto", flexShrink: 0 }}
+          className="btn btn-secondary btn-sm w-auto shrink-0"
           onClick={() => onStartTask(task.id)}
           disabled={isUpdating}
         >
           {isUpdating ? (
             <>
-              <span className="spinner" style={{ width: 14, height: 14, borderWidth: 2 }} />
+              <span className="spinner w-3.5 h-3.5 border-2" />
               Updating...
             </>
           ) : (

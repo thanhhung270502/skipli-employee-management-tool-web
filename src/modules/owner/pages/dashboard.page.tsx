@@ -2,8 +2,9 @@
 import { motion } from "framer-motion";
 import { Users, CheckSquare, Clock, TrendingUp } from "lucide-react";
 import { useQueryEmployees, useQueryAllTasks } from "@/shared/hooks";
-import { DashboardSkeleton } from "@/shared/components";
+import { DashboardSkeleton, Badge } from "@/shared/components";
 import { StatCard } from "../components";
+import { formatEnumToLabel } from "@/shared/utils";
 
 export function DashboardPage() {
   const { data: empData, isLoading: empLoading } = useQueryEmployees();
@@ -59,8 +60,7 @@ export function DashboardPage() {
       </div>
 
       <motion.div
-        className="grid-4"
-        style={{ marginBottom: 32 }}
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
         initial="hidden"
         animate="visible"
         variants={{ visible: { transition: { staggerChildren: 0.07 } } }}
@@ -70,55 +70,41 @@ export function DashboardPage() {
         ))}
       </motion.div>
 
-      <div className="grid-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="card">
           <div className="card-header">
             <span className="card-title">Recent Tasks</span>
-            <a href="/tasks" style={{ fontSize: 13, color: "var(--accent-primary)" }}>
+            <a href="/tasks" className="text-[13px] text-[var(--accent-primary)]">
               View all →
             </a>
           </div>
           {recentTasks.length === 0 ? (
-            <div className="empty-state" style={{ padding: "32px 0" }}>
+            <div className="empty-state !py-8">
               <div className="empty-state-icon">📋</div>
               <p className="empty-state-title">No tasks yet</p>
               <p className="empty-state-desc">Create your first task for an employee</p>
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div className="flex flex-col gap-3">
               {recentTasks.map((task) => (
                 <div
                   key={task.id}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 12,
-                    padding: "10px 0",
-                    borderBottom: "1px solid var(--border-subtle)",
-                  }}
+                  className="flex items-center gap-3 py-2.5 border-b border-[var(--border-subtle)]"
                 >
-                  <div style={{ flex: 1, minWidth: 0 }}>
+                  <div className="flex-1 min-w-0">
                     <p
-                      style={{
-                        fontSize: 14,
-                        fontWeight: 500,
-                        color: "var(--text-primary)",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
+                      className="text-sm font-medium text-[var(--text-primary)] truncate"
                     >
                       {task.title}
                     </p>
-                    <p style={{ fontSize: 12, color: "var(--text-muted)" }}>
+                    <p className="text-xs text-[var(--text-muted)]">
                       {task.assignedToName}
                     </p>
                   </div>
-                  <span
-                    className={`badge ${task.status === "done" ? "badge-success" : "badge-warning"}`}
-                  >
-                    {task.status}
-                  </span>
+                  <Badge variant={task.status === "done" ? "success" : "warning"}>
+                    {formatEnumToLabel(task.status)}
+                  </Badge>
+
                 </div>
               ))}
             </div>
@@ -128,39 +114,34 @@ export function DashboardPage() {
         <div className="card">
           <div className="card-header">
             <span className="card-title">Recent Employees</span>
-            <a href="/employees" style={{ fontSize: 13, color: "var(--accent-primary)" }}>
+            <a href="/employees" className="text-[13px] text-[var(--accent-primary)]">
               View all →
             </a>
           </div>
           {recentEmployees.length === 0 ? (
-            <div className="empty-state" style={{ padding: "32px 0" }}>
+            <div className="empty-state !py-8">
               <div className="empty-state-icon">👥</div>
               <p className="empty-state-title">No employees yet</p>
               <p className="empty-state-desc">Add your first team member</p>
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <div className="flex flex-col gap-1">
               {recentEmployees.map((emp) => (
                 <div
                   key={emp.id}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 12,
-                    padding: "10px 0",
-                    borderBottom: "1px solid var(--border-subtle)",
-                  }}
+                  className="flex items-center gap-3 py-2.5 border-b border-[var(--border-subtle)]"
                 >
                   <div className="avatar avatar-sm">{emp.name[0].toUpperCase()}</div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 14, fontWeight: 500, color: "var(--text-primary)" }}>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-[var(--text-primary)]">
                       {emp.name}
                     </p>
-                    <p style={{ fontSize: 12, color: "var(--text-muted)" }}>{emp.department}</p>
+                    <p className="text-xs text-[var(--text-muted)]">{emp.department}</p>
                   </div>
-                  <span className={`badge ${emp.isSetup ? "badge-success" : "badge-warning"}`}>
+                  <Badge variant={emp.isSetup ? "success" : "warning"}>
                     {emp.isSetup ? "Active" : "Pending"}
-                  </span>
+                  </Badge>
+
                 </div>
               ))}
             </div>

@@ -25,12 +25,10 @@ export function EmployeeLoginPage() {
   return (
     <div className="auth-page">
       <div
-        className="auth-bg-orb auth-bg-orb-1"
-        style={{ background: "rgba(139, 92, 246, 0.12)" }}
+        className="auth-bg-orb auth-bg-orb-1 !bg-[rgba(139,92,246,0.12)]"
       />
       <div
-        className="auth-bg-orb auth-bg-orb-2"
-        style={{ background: "rgba(99, 102, 241, 0.08)" }}
+        className="auth-bg-orb auth-bg-orb-2 !bg-[rgba(99,102,241,0.08)]"
       />
 
       <motion.div
@@ -71,7 +69,7 @@ export function EmployeeLoginPage() {
                       {...emailMethods.register("email")}
                     />
                     {emailMethods.formState.errors.email && (
-                      <p className="form-hint" style={{ color: "var(--danger)" }}>
+                      <p className="form-hint !text-[var(--danger)]">
                         {emailMethods.formState.errors.email.message}
                       </p>
                     )}
@@ -92,13 +90,12 @@ export function EmployeeLoginPage() {
                 </form>
               </FormProvider>
 
-              <div className="divider-text" style={{ marginTop: 24 }}>
+              <div className="divider-text mt-6">
                 <span>Manager?</span>
               </div>
               <a
                 href="/login"
-                className="btn btn-ghost w-full"
-                style={{ marginTop: 8, textAlign: "center" }}
+                className="btn btn-ghost w-full mt-2 text-center"
               >
                 Login as Manager
               </a>
@@ -113,24 +110,14 @@ export function EmployeeLoginPage() {
             >
               <button
                 onClick={goBack}
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  color: "var(--text-secondary)",
-                  fontSize: 13,
-                  marginBottom: 16,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                }}
+                className="bg-none border-none cursor-pointer text-[var(--text-secondary)] text-[13px] mb-4 flex items-center gap-1.5"
               >
                 ← Back
               </button>
               <h1 className="auth-title">Check Your Email</h1>
               <p className="auth-subtitle">
                 We sent a code to{" "}
-                <strong style={{ color: "var(--text-primary)" }}>{email}</strong>
+                <strong className="text-[var(--text-primary)]">{email}</strong>
               </p>
 
               <form onSubmit={handleValidateOtp}>
@@ -159,9 +146,9 @@ export function EmployeeLoginPage() {
                   )}
                 </button>
 
-                <div style={{ textAlign: "center", marginTop: 20 }}>
+                <div className="text-center mt-5">
                   {countdown > 0 ? (
-                    <span style={{ fontSize: 13, color: "var(--text-muted)" }}>
+                    <span className="text-[13px] text-[var(--text-muted)]">
                       Resend in {countdown}s
                     </span>
                   ) : (
@@ -169,13 +156,7 @@ export function EmployeeLoginPage() {
                       type="button"
                       onClick={handleSendOtp}
                       disabled={loading}
-                      style={{
-                        background: "none",
-                        border: "none",
-                        cursor: "pointer",
-                        color: "var(--accent-primary)",
-                        fontSize: 13,
-                      }}
+                      className="bg-none border-none cursor-pointer text-[var(--accent-primary)] text-[13px]"
                     >
                       Resend Code
                     </button>

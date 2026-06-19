@@ -120,9 +120,9 @@ export function EmployeeChatPage() {
           <h1 className="page-title">Chat with Manager</h1>
           <p className="page-subtitle">
             {connected ? (
-              <span style={{ color: "var(--success)" }}>● Connected</span>
+              <span className="text-[var(--success)]">● Connected</span>
             ) : (
-              <span style={{ color: "var(--text-muted)" }}>
+              <span className="text-[var(--text-muted)]">
                 ○ Connecting...
               </span>
             )}
@@ -131,41 +131,33 @@ export function EmployeeChatPage() {
       </div>
 
       <div
-        className="chat-container"
-        style={{
-          height: "calc(100vh - 160px)",
-          borderRadius: "var(--radius-lg)",
-        }}
+        className="chat-container !h-[calc(100vh-160px)] !rounded-[var(--radius-lg)]"
       >
         <div className="chat-main">
           <div className="chat-header">
             <div className="avatar avatar-sm">M</div>
             <div>
-              <p style={{ fontWeight: 600, color: "var(--text-primary)" }}>
+              <p className="font-semibold text-[var(--text-primary)]">
                 Manager
               </p>
-              <p style={{ fontSize: 12, color: "var(--success)" }}>● Online</p>
+              <p className="text-xs text-[var(--success)]">● Online</p>
             </div>
           </div>
 
           <div className="chat-messages">
             {loading ? (
-              <div className="page-loading" style={{ height: 200 }}>
+              <div className="page-loading !h-[200px]">
                 <div className="spinner spinner-primary" />
               </div>
             ) : messages.length === 0 ? (
               <div
-                style={{
-                  textAlign: "center",
-                  padding: "60px 24px",
-                  color: "var(--text-muted)",
-                }}
+                className="text-center py-[60px] px-6 text-[var(--text-muted)]"
               >
                 <MessageSquare
                   size={40}
-                  style={{ margin: "0 auto 12px", opacity: 0.3 }}
+                  className="mx-auto mb-3 opacity-30"
                 />
-                <p style={{ fontSize: 14 }}>
+                <p className="text-sm">
                   No messages yet. Say hello to your manager! 👋
                 </p>
               </div>
@@ -198,7 +190,7 @@ export function EmployeeChatPage() {
                 <div className="typing-dot" />
                 <div className="typing-dot" />
                 <div className="typing-dot" />
-                <span style={{ marginLeft: 4 }}>Manager is typing...</span>
+                <span className="ml-1">Manager is typing...</span>
               </div>
             )}
             <div ref={messagesEndRef} />

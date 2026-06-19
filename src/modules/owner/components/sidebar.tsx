@@ -59,9 +59,9 @@ export function Sidebar({ role }: SidebarProps) {
             }`}
           >
             <Icon size={18} />
-            <span style={{ flex: 1 }}>{label}</span>
+            <span className="flex-1">{label}</span>
             {(pathname === href || pathname.startsWith(href + "/")) && (
-              <ChevronRight size={14} style={{ opacity: 0.5 }} />
+              <ChevronRight size={14} className="opacity-50" />
             )}
           </Link>
         ))}
@@ -69,40 +69,26 @@ export function Sidebar({ role }: SidebarProps) {
 
       <div className="sidebar-footer">
         <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            marginBottom: 12,
-            padding: "0 4px",
-          }}
+          className="flex items-center gap-2.5 mb-3 px-1"
         >
-          <div className="avatar avatar-sm" style={{ fontSize: 13 }}>
+          <div className="avatar avatar-sm !text-[13px]">
             {initials}
           </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
+          <div className="flex-1 min-w-0">
             <p
-              style={{
-                fontSize: 13,
-                fontWeight: 600,
-                color: "var(--text-primary)",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
+              className="text-[13px] font-semibold text-[var(--text-primary)] truncate"
             >
               {displayName}
             </p>
-            <p style={{ fontSize: 11, color: "var(--text-muted)" }}>
+            <p className="text-[11px] text-[var(--text-muted)]">
               {role === "owner" ? user?.phoneNumber : user?.employee?.email}
             </p>
           </div>
         </div>
 
         <button
-          className="sidebar-nav-item"
+          className="sidebar-nav-item w-full text-[var(--danger)]"
           onClick={logout}
-          style={{ width: "100%", color: "var(--danger)" }}
         >
           <LogOut size={16} />
           <span>Sign Out</span>

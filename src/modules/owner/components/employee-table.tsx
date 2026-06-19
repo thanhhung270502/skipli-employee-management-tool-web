@@ -2,6 +2,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Edit2, Trash2 } from "lucide-react";
 import type { EmployeeObject } from "@/common/models/employee";
+import { Badge } from "@/shared/components";
+
 
 interface EmployeeTableProps {
   employees: EmployeeObject[];
@@ -32,13 +34,13 @@ export function EmployeeTable({ employees, onEdit, onDelete }: EmployeeTableProp
               transition={{ duration: 0.2 }}
             >
               <td>
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div className="flex items-center gap-3">
                   <div className="avatar avatar-sm">
                     {emp.name[0].toUpperCase()}
                   </div>
                   <div>
-                    <p style={{ fontWeight: 600 }}>{emp.name}</p>
-                    <p style={{ fontSize: 12, color: "var(--text-muted)" }}>
+                    <p className="font-semibold">{emp.name}</p>
+                    <p className="text-xs text-[var(--text-muted)]">
                       {emp.email}
                     </p>
                   </div>
@@ -46,22 +48,22 @@ export function EmployeeTable({ employees, onEdit, onDelete }: EmployeeTableProp
               </td>
               <td>{emp.department}</td>
               <td>
-                <span className="badge badge-purple">{emp.role}</span>
+                <Badge variant="purple">{emp.role}</Badge>
+
               </td>
               <td>
-                <p style={{ fontSize: 13, color: "var(--text-secondary)" }}>
+                <p className="text-[13px] text-[var(--text-secondary)]">
                   {emp.phone ?? "—"}
                 </p>
               </td>
               <td>
-                <span
-                  className={`badge ${emp.isSetup ? "badge-success" : "badge-warning"}`}
-                >
+                <Badge variant={emp.isSetup ? "success" : "warning"}>
                   {emp.isSetup ? "✓ Active" : "⏳ Pending"}
-                </span>
+                </Badge>
+
               </td>
               <td>
-                <div style={{ display: "flex", gap: 6 }}>
+                <div className="flex gap-1.5">
                   <button
                     className="btn btn-ghost btn-sm btn-icon"
                     onClick={() => onEdit(emp)}

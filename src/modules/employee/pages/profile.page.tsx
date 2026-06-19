@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { FormProvider } from "react-hook-form";
 import { User, Mail, Phone, Save } from "lucide-react";
 import { useProfileForm } from "../hooks";
+import { Badge } from "@/shared/components";
+
 
 export function EmployeeProfilePage() {
   const { profile, loading, methods, onSubmit, isSaving, isDirty } =
@@ -25,29 +27,29 @@ export function EmployeeProfilePage() {
         </div>
       </div>
 
-      <div style={{ maxWidth: 600 }}>
+      <div className="max-w-[600px]">
         <motion.div
-          className="card"
+          className="card flex items-center gap-5 mb-6"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 24 }}
         >
-          <div className="avatar avatar-lg" style={{ fontSize: 28 }}>
+          <div className="avatar avatar-lg !text-[28px]">
             {profile?.name?.[0]?.toUpperCase() ?? "?"}
           </div>
           <div>
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: "var(--text-primary)" }}>
+            <h2 className="text-xl font-bold text-[var(--text-primary)]">
               {profile?.name}
             </h2>
-            <p style={{ fontSize: 14, color: "var(--text-secondary)" }}>
+            <p className="text-sm text-[var(--text-secondary)]">
               {profile?.role} · {profile?.department}
             </p>
-            <span
-              className={`badge ${profile?.isSetup ? "badge-success" : "badge-warning"}`}
-              style={{ marginTop: 8 }}
+            <Badge
+              variant={profile?.isSetup ? "success" : "warning"}
+              className="mt-2"
             >
               {profile?.isSetup ? "✓ Active Account" : "Pending Setup"}
-            </span>
+            </Badge>
+
           </div>
         </motion.div>
 
@@ -60,7 +62,8 @@ export function EmployeeProfilePage() {
           <div className="card-header">
             <span className="card-title">Edit Information</span>
             {isDirty && (
-              <span className="badge badge-warning">Unsaved changes</span>
+              <Badge variant="warning">Unsaved changes</Badge>
+
             )}
           </div>
 
@@ -68,7 +71,7 @@ export function EmployeeProfilePage() {
             <form onSubmit={onSubmit}>
               <div className="form-group">
                 <label className="form-label">
-                  <User size={12} style={{ display: "inline", marginRight: 4 }} />
+                  <User size={12} className="inline mr-1" />
                   Full Name
                 </label>
                 <input
@@ -76,7 +79,7 @@ export function EmployeeProfilePage() {
                   {...methods.register("name")}
                 />
                 {methods.formState.errors.name && (
-                  <p className="form-hint" style={{ color: "var(--danger)" }}>
+                  <p className="form-hint !text-[var(--danger)]">
                     {methods.formState.errors.name.message}
                   </p>
                 )}
@@ -84,7 +87,7 @@ export function EmployeeProfilePage() {
 
               <div className="form-group">
                 <label className="form-label">
-                  <Mail size={12} style={{ display: "inline", marginRight: 4 }} />
+                  <Mail size={12} className="inline mr-1" />
                   Email Address
                 </label>
                 <input
@@ -93,7 +96,7 @@ export function EmployeeProfilePage() {
                   {...methods.register("email")}
                 />
                 {methods.formState.errors.email && (
-                  <p className="form-hint" style={{ color: "var(--danger)" }}>
+                  <p className="form-hint !text-[var(--danger)]">
                     {methods.formState.errors.email.message}
                   </p>
                 )}
@@ -101,7 +104,7 @@ export function EmployeeProfilePage() {
 
               <div className="form-group">
                 <label className="form-label">
-                  <Phone size={12} style={{ display: "inline", marginRight: 4 }} />
+                  <Phone size={12} className="inline mr-1" />
                   Phone Number
                 </label>
                 <input
@@ -114,7 +117,7 @@ export function EmployeeProfilePage() {
 
               <hr className="divider" />
 
-              <div className="grid-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="form-group">
                   <label className="form-label">Department</label>
                   <input
@@ -135,15 +138,14 @@ export function EmployeeProfilePage() {
                 </div>
               </div>
 
-              <p className="form-hint" style={{ marginBottom: 20 }}>
+              <p className="form-hint mb-5">
                 Department and role can only be changed by your manager.
               </p>
 
               <button
                 type="submit"
-                className="btn btn-primary"
+                className="btn btn-primary w-auto"
                 disabled={isSaving || !isDirty}
-                style={{ width: "auto" }}
               >
                 {isSaving ? (
                   <>

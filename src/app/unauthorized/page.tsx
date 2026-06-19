@@ -22,10 +22,10 @@ export default function UnauthorizedPage() {
           return to your dashboard.
         </p>
         <div className="error-page-actions">
-          <Link href={homeHref} className="btn btn-primary" style={{ width: "auto" }}>
+          <Link href={homeHref} className="btn btn-primary w-auto">
             Go to dashboard
           </Link>
-          <button type="button" className="btn btn-ghost" style={{ width: "auto" }} onClick={handleSignOut}>
+          <button type="button" className="btn btn-ghost w-auto" onClick={handleSignOut}>
             Sign in again
           </button>
         </div>

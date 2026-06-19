@@ -25,7 +25,7 @@ function EmployeeFormFields({ editEmployee }: { editEmployee: EmployeeObject | n
     <>
       <div className="form-group">
         <label className="form-label">
-          <User size={12} style={{ display: "inline", marginRight: 4 }} />
+          <User size={12} className="inline mr-1" />
           Full Name
         </label>
         <input
@@ -34,7 +34,7 @@ function EmployeeFormFields({ editEmployee }: { editEmployee: EmployeeObject | n
           {...register("name")}
         />
         {errors.name && (
-          <p className="form-hint" style={{ color: "var(--danger)" }}>
+          <p className="form-hint !text-[var(--danger)]">
             {errors.name.message}
           </p>
         )}
@@ -42,7 +42,7 @@ function EmployeeFormFields({ editEmployee }: { editEmployee: EmployeeObject | n
 
       <div className="form-group">
         <label className="form-label">
-          <Mail size={12} style={{ display: "inline", marginRight: 4 }} />
+          <Mail size={12} className="inline mr-1" />
           Email
         </label>
         <input
@@ -53,7 +53,7 @@ function EmployeeFormFields({ editEmployee }: { editEmployee: EmployeeObject | n
           {...register("email")}
         />
         {errors.email && (
-          <p className="form-hint" style={{ color: "var(--danger)" }}>
+          <p className="form-hint !text-[var(--danger)]">
             {errors.email.message}
           </p>
         )}
@@ -62,10 +62,10 @@ function EmployeeFormFields({ editEmployee }: { editEmployee: EmployeeObject | n
         )}
       </div>
 
-      <div className="grid-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="form-group">
           <label className="form-label">
-            <Phone size={12} style={{ display: "inline", marginRight: 4 }} />
+            <Phone size={12} className="inline mr-1" />
             Phone
           </label>
           <input
@@ -77,7 +77,7 @@ function EmployeeFormFields({ editEmployee }: { editEmployee: EmployeeObject | n
         </div>
         <div className="form-group">
           <label className="form-label">
-            <Building size={12} style={{ display: "inline", marginRight: 4 }} />
+            <Building size={12} className="inline mr-1" />
             Department
           </label>
           <input
@@ -86,7 +86,7 @@ function EmployeeFormFields({ editEmployee }: { editEmployee: EmployeeObject | n
             {...register("department")}
           />
           {errors.department && (
-            <p className="form-hint" style={{ color: "var(--danger)" }}>
+            <p className="form-hint !text-[var(--danger)]">
               {errors.department.message}
             </p>
           )}
@@ -143,20 +143,18 @@ export function EmployeeFormModal({
             <FormProvider {...methods}>
               <form onSubmit={onSubmit}>
                 <EmployeeFormFields editEmployee={editEmployee} />
-                <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
+                <div className="flex gap-3 mt-2">
                   <button
                     type="button"
-                    className="btn btn-ghost"
+                    className="btn btn-ghost flex-1"
                     onClick={onClose}
-                    style={{ flex: 1 }}
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="btn btn-primary"
+                    className="btn btn-primary !flex-[2]"
                     disabled={isSubmitting}
-                    style={{ flex: 2 }}
                   >
                     {isSubmitting ? (
                       <>

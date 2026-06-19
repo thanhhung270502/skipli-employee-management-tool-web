@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import type { TaskObject } from "@/common/models/task";
 import { useDeleteTaskMutation } from "@/shared/hooks";
 import { getTimestamp } from "@/shared/utils";
+import { Badge } from "@/shared/components";
 
 interface TaskCardProps {
   task: TaskObject;
@@ -32,123 +33,75 @@ export function TaskCard({ task, index, onEdit }: TaskCardProps) {
     }
   };
 
-  const getStatusColor = () => {
+  const getStatusClasses = () => {
     switch (task.status) {
       case "done":
-        return "var(--success)";
+        return "bg-[var(--success)] shadow-[0_0_8px_rgba(16,185,129,0.4)]";
       case "in_progress":
-        return "var(--info)";
+        return "bg-[var(--info)] shadow-[0_0_8px_rgba(59,130,246,0.4)]";
       default:
-        return "var(--warning)";
-    }
-  };
-
-  const getStatusShadow = () => {
-    switch (task.status) {
-      case "done":
-        return "0 0 8px rgba(16,185,129,0.4)";
-      case "in_progress":
-        return "0 0 8px rgba(59,130,246,0.4)";
-      default:
-        return "0 0 8px rgba(245,158,11,0.4)";
+        return "bg-[var(--warning)] shadow-[0_0_8px_rgba(245,158,11,0.4)]";
     }
   };
 
   return (
     <motion.div
-      className="card"
+      className="card flex items-start gap-4"
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.04 }}
-      style={{ display: "flex", alignItems: "flex-start", gap: 16 }}
     >
-      <div
-        style={{
-          width: 12,
-          height: 12,
-          borderRadius: "50%",
-          flexShrink: 0,
-          marginTop: 4,
-          background: getStatusColor(),
-          boxShadow: getStatusShadow(),
-        }}
-      />
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <div className={`w-3 h-3 rounded-full shrink-0 mt-1 ${getStatusClasses()}`} />
+      <div className="flex-1 min-w-0">
         <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            flexWrap: "wrap",
-          }}
+          className="flex items-center gap-2.5 flex-wrap"
         >
-          <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--text-primary)" }}>
+          <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">
             {task.title}
           </h3>
-          <span
-            className={`badge ${
+          <Badge
+            variant={
               task.status === "done"
-                ? "badge-success"
+                ? "success"
                 : task.status === "in_progress"
-                ? "badge-info"
-                : "badge-warning"
-            }`}
-            style={{ textTransform: "capitalize" }}
+                ? "info"
+                : "warning"
+            }
+            className="capitalize"
           >
             {task.status === "in_progress" ? "In Progress" : task.status}
-          </span>
-          <span
-            className={`badge ${
+          </Badge>
+          <Badge
+            variant={
               task.priority === "high"
-                ? "badge-danger"
+                ? "danger"
                 : task.priority === "medium"
-                ? "badge-purple"
-                : "badge-neutral"
-            }`}
-            style={{ textTransform: "capitalize" }}
+                ? "purple"
+                : "neutral"
+            }
+            className="capitalize"
           >
             {task.priority || "medium"}
-          </span>
+          </Badge>
         </div>
         {task.description && (
           <p
-            style={{
-              fontSize: 13,
-              color: "var(--text-secondary)",
-              marginTop: 4,
-            }}
+            className="text-[13px] text-[var(--text-secondary)] mt-1"
           >
             {task.description}
           </p>
         )}
         <div
-          style={{
-            display: "flex",
-            gap: 16,
-            marginTop: 8,
-            flexWrap: "wrap",
-          }}
+          className="flex gap-4 mt-2 flex-wrap"
         >
           <span
-            style={{
-              fontSize: 12,
-              color: "var(--text-muted)",
-              display: "flex",
-              alignItems: "center",
-              gap: 4,
-            }}
+            className="text-xs text-[var(--text-muted)] flex items-center gap-1"
           >
             👤 {task.assignedToName}
           </span>
           {dueDate && (
             <span
-              style={{
-                fontSize: 12,
-                color: "var(--text-muted)",
-                display: "flex",
-                alignItems: "center",
-                gap: 4,
-              }}
+              className="text-xs text-[var(--text-muted)] flex items-center gap-1"
             >
               <Calendar size={11} />
               {dueDate.toLocaleDateString()}
@@ -156,24 +109,22 @@ export function TaskCard({ task, index, onEdit }: TaskCardProps) {
           )}
         </div>
       </div>
-      <div style={{ display: "flex", gap: 8, marginLeft: "auto", flexShrink: 0 }}>
+      <div className="flex gap-2 ml-auto shrink-0">
         <button
-          className="btn btn-icon btn-ghost"
+          className="btn btn-icon btn-ghost w-8 h-8"
           onClick={onEdit}
           title="Edit Task"
-          style={{ width: 32, height: 32 }}
         >
           <Edit2 size={13} />
         </button>
         <button
-          className="btn btn-icon btn-danger"
+          className="btn btn-icon btn-danger w-8 h-8"
           onClick={handleDelete}
           disabled={isDeleting}
           title="Delete Task"
-          style={{ width: 32, height: 32 }}
         >
           {isDeleting ? (
-            <span className="spinner" style={{ width: 12, height: 12, borderWidth: 2 }} />
+            <span className="spinner w-3 h-3 border-2" />
           ) : (
             <Trash2 size={13} />
           )}

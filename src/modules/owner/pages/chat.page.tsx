@@ -135,24 +135,20 @@ export function ChatPage() {
         </div>
       </div>
 
-      <div className="chat-container" style={{ height: "calc(100vh - 160px)" }}>
+      <div className="chat-container !h-[calc(100vh-160px)]">
         <div className="chat-sidebar">
           <div className="chat-sidebar-header">💬 Conversations</div>
           {isLoading ? (
-            <div className="page-loading" style={{ height: 200 }}>
+            <div className="page-loading !h-[200px]">
               <div className="spinner spinner-primary" />
             </div>
           ) : employees.length === 0 ? (
-            <div className="empty-state" style={{ padding: 24 }}>
-              <div className="empty-state-icon" style={{ fontSize: 32 }}>
+            <div className="empty-state !p-6">
+              <div className="empty-state-icon text-[32px]">
                 👥
               </div>
               <p
-                style={{
-                  fontSize: 13,
-                  color: "var(--text-muted)",
-                  textAlign: "center",
-                }}
+                className="text-[13px] text-[var(--text-muted)] text-center"
               >
                 No active employees
               </p>
@@ -176,9 +172,9 @@ export function ChatPage() {
 
         <div className="chat-main">
           {!selectedEmployee ? (
-            <div className="page-loading" style={{ height: "100%" }}>
-              <MessageSquare size={40} style={{ color: "var(--text-muted)", opacity: 0.4 }} />
-              <p style={{ color: "var(--text-muted)", marginTop: 8 }}>
+            <div className="page-loading !h-full">
+              <MessageSquare size={40} className="text-[var(--text-muted)] opacity-40" />
+              <p className="text-[var(--text-muted)] mt-2">
                 Select an employee to start chatting
               </p>
             </div>
@@ -187,22 +183,17 @@ export function ChatPage() {
               <div className="chat-header">
                 <div className="avatar avatar-sm">{selectedEmployee.name[0].toUpperCase()}</div>
                 <div>
-                  <p style={{ fontWeight: 600, color: "var(--text-primary)" }}>
+                  <p className="font-semibold text-[var(--text-primary)]">
                     {selectedEmployee.name}
                   </p>
-                  <p style={{ fontSize: 12, color: "var(--success)" }}>● Online</p>
+                  <p className="text-xs text-[var(--success)]">● Online</p>
                 </div>
               </div>
 
               <div className="chat-messages">
                 {messages.length === 0 && (
                   <div
-                    style={{
-                      textAlign: "center",
-                      padding: "40px 0",
-                      color: "var(--text-muted)",
-                      fontSize: 13,
-                    }}
+                    className="text-center py-10 text-[var(--text-muted)] text-[13px]"
                   >
                     No messages yet. Say hello! 👋
                   </div>
@@ -226,7 +217,7 @@ export function ChatPage() {
                     <div className="typing-dot" />
                     <div className="typing-dot" />
                     <div className="typing-dot" />
-                    <span style={{ marginLeft: 4 }}>{typingUser} is typing...</span>
+                    <span className="ml-1">{typingUser} is typing...</span>
                   </div>
                 )}
                 <div ref={messagesEndRef} />

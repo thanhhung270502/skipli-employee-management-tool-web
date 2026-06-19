@@ -48,35 +48,23 @@ function SetupAccountContent() {
             <div className="alert alert-error">{error}</div>
             <a
               href="/employee-login"
-              className="btn btn-primary"
-              style={{ marginTop: 16 }}
+              className="btn btn-primary mt-4"
             >
               Go to Login
             </a>
           </div>
         ) : (
           <>
-            <div style={{ marginBottom: 24 }}>
+            <div className="mb-6">
               <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 6,
-                  padding: "6px 12px",
-                  background: "var(--success-bg)",
-                  borderRadius: 100,
-                  marginBottom: 16,
-                  fontSize: 12,
-                  fontWeight: 600,
-                  color: "var(--success)",
-                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--success-bg)] rounded-full mb-4 text-xs font-semibold text-[var(--success)]"
               >
                 ✓ Invite Verified
               </div>
               <h1 className="auth-title">Set Up Your Account</h1>
               <p className="auth-subtitle">
                 Welcome,{" "}
-                <strong style={{ color: "var(--text-primary)" }}>
+                <strong className="text-[var(--text-primary)]">
                   {employeeInfo?.name}
                 </strong>
                 ! Create your login credentials.
@@ -99,7 +87,7 @@ function SetupAccountContent() {
                     {...methods.register("username")}
                   />
                   {methods.formState.errors.username && (
-                    <p className="form-hint" style={{ color: "var(--danger)" }}>
+                    <p className="form-hint !text-[var(--danger)]">
                       {methods.formState.errors.username.message}
                     </p>
                   )}
@@ -114,7 +102,7 @@ function SetupAccountContent() {
                     {...methods.register("password")}
                   />
                   {methods.formState.errors.password && (
-                    <p className="form-hint" style={{ color: "var(--danger)" }}>
+                    <p className="form-hint !text-[var(--danger)]">
                       {methods.formState.errors.password.message}
                     </p>
                   )}
@@ -129,7 +117,7 @@ function SetupAccountContent() {
                     {...methods.register("confirmPassword")}
                   />
                   {methods.formState.errors.confirmPassword && (
-                    <p className="form-hint" style={{ color: "var(--danger)" }}>
+                    <p className="form-hint !text-[var(--danger)]">
                       {methods.formState.errors.confirmPassword.message}
                     </p>
                   )}
@@ -137,7 +125,7 @@ function SetupAccountContent() {
 
                 <button
                   type="submit"
-                  className="btn btn-primary btn-lg"
+                  className="btn btn-primary btn-lg w-full"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (

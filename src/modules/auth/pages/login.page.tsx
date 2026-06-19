@@ -65,7 +65,7 @@ export function LoginPage() {
                       {...phoneMethods.register("phoneNumber")}
                     />
                     {phoneMethods.formState.errors.phoneNumber && (
-                      <p className="form-hint" style={{ color: "var(--danger)" }}>
+                      <p className="form-hint !text-[var(--danger)]">
                         {phoneMethods.formState.errors.phoneNumber.message}
                       </p>
                     )}
@@ -87,13 +87,12 @@ export function LoginPage() {
                 </form>
               </FormProvider>
 
-              <div className="divider-text" style={{ marginTop: 24 }}>
+              <div className="divider-text mt-6">
                 <span>Employee?</span>
               </div>
               <a
                 href="/employee-login"
-                className="btn btn-ghost w-full"
-                style={{ marginTop: 8, textAlign: "center" }}
+                className="btn btn-ghost w-full mt-2 text-center"
               >
                 Login as Employee
               </a>
@@ -108,24 +107,14 @@ export function LoginPage() {
             >
               <button
                 onClick={goBack}
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  color: "var(--text-secondary)",
-                  fontSize: 13,
-                  marginBottom: 16,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                }}
+                className="bg-none border-none cursor-pointer text-[var(--text-secondary)] text-[13px] mb-4 flex items-center gap-1.5"
               >
                 ← Back
               </button>
               <h1 className="auth-title">Enter Access Code</h1>
               <p className="auth-subtitle">
                 We sent a 6-digit code to{" "}
-                <strong style={{ color: "var(--text-primary)" }}>
+                <strong className="text-[var(--text-primary)]">
                   {phoneNumber}
                 </strong>
               </p>
@@ -156,9 +145,9 @@ export function LoginPage() {
                   )}
                 </button>
 
-                <div style={{ textAlign: "center", marginTop: 20 }}>
+                <div className="text-center mt-5">
                   {countdown > 0 ? (
-                    <span style={{ fontSize: 13, color: "var(--text-muted)" }}>
+                    <span className="text-[13px] text-[var(--text-muted)]">
                       Resend in {countdown}s
                     </span>
                   ) : (
@@ -172,13 +161,7 @@ export function LoginPage() {
                         )()
                       }
                       disabled={loading}
-                      style={{
-                        background: "none",
-                        border: "none",
-                        cursor: "pointer",
-                        color: "var(--accent-primary)",
-                        fontSize: 13,
-                      }}
+                      className="bg-none border-none cursor-pointer text-[var(--accent-primary)] text-[13px]"
                     >
                       Resend OTP
                     </button>

@@ -29,7 +29,7 @@ function TaskFormFields({ employees }: { employees: EmployeeObject[] }) {
           {...register("title")}
         />
         {errors.title && (
-          <p className="form-hint" style={{ color: "var(--danger)" }}>
+          <p className="form-hint !text-[var(--danger)]">
             {errors.title.message}
           </p>
         )}
@@ -38,20 +38,18 @@ function TaskFormFields({ employees }: { employees: EmployeeObject[] }) {
       <div className="form-group">
         <label className="form-label">Description (optional)</label>
         <textarea
-          className="form-input"
+          className="form-input resize-y"
           placeholder="Task details..."
           rows={3}
-          style={{ resize: "vertical" }}
           {...register("description")}
         />
       </div>
 
-      <div className="grid-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="form-group">
           <label className="form-label">Assign To</label>
           <select
-            className="form-input"
-            style={{ cursor: "pointer" }}
+            className="form-input cursor-pointer"
             {...register("assignedTo")}
           >
             <option value="">Select employee...</option>
@@ -62,19 +60,19 @@ function TaskFormFields({ employees }: { employees: EmployeeObject[] }) {
             ))}
           </select>
           {errors.assignedTo && (
-            <p className="form-hint" style={{ color: "var(--danger)" }}>
+            <p className="form-hint !text-[var(--danger)]">
               {errors.assignedTo.message}
             </p>
           )}
           {employees.length === 0 && (
-            <p className="form-hint" style={{ color: "var(--warning)" }}>
+            <p className="form-hint !text-[var(--warning)]">
               No active employees yet
             </p>
           )}
         </div>
         <div className="form-group">
           <label className="form-label">
-            <Calendar size={12} style={{ display: "inline", marginRight: 4 }} />
+            <Calendar size={12} className="inline mr-1" />
             Due Date (optional)
           </label>
           <input
@@ -88,8 +86,7 @@ function TaskFormFields({ employees }: { employees: EmployeeObject[] }) {
       <div className="form-group">
         <label className="form-label">Priority</label>
         <select
-          className="form-input"
-          style={{ cursor: "pointer" }}
+          className="form-input cursor-pointer"
           {...register("priority")}
         >
           <option value="low">Low 🟢</option>
@@ -138,20 +135,18 @@ export function TaskFormModal({
             <FormProvider {...methods}>
               <form onSubmit={onSubmit}>
                 <TaskFormFields employees={employees} />
-                <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
+                <div className="flex gap-3 mt-4">
                   <button
                     type="button"
-                    className="btn btn-ghost"
+                    className="btn btn-ghost flex-1"
                     onClick={onClose}
-                    style={{ flex: 1 }}
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="btn btn-primary"
+                    className="btn btn-primary !flex-[2]"
                     disabled={isSubmitting}
-                    style={{ flex: 2 }}
                   >
                     {isSubmitting ? (
                       <>

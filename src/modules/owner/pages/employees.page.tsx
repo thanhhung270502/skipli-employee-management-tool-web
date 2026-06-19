@@ -90,19 +90,18 @@ export function EmployeesPage() {
             {employees.length} team member{employees.length !== 1 ? "s" : ""}
           </p>
         </div>
-        <button className="btn btn-primary" onClick={openAddModal} style={{ width: "auto" }}>
+        <button className="btn btn-primary w-auto" onClick={openAddModal}>
           <Plus size={16} /> Add Employee
         </button>
       </div>
 
-      <div style={{ marginBottom: 24 }}>
+      <div className="mb-6">
         <input
           type="text"
-          className="form-input"
+          className="form-input max-w-[400px]"
           placeholder="Search by name, email, or department..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          style={{ maxWidth: 400 }}
         />
       </div>
 
@@ -117,9 +116,8 @@ export function EmployeesPage() {
           </p>
           {!search && (
             <button
-              className="btn btn-primary"
+              className="btn btn-primary w-auto mt-4"
               onClick={openAddModal}
-              style={{ width: "auto", marginTop: 16 }}
             >
               <Plus size={16} /> Add Employee
             </button>
@@ -151,33 +149,30 @@ export function EmployeesPage() {
             }}
           >
             <motion.div
-              className="modal"
-              style={{ maxWidth: 380 }}
+              className="modal !max-w-[380px]"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
             >
-              <div style={{ textAlign: "center", padding: "8px 0" }}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>⚠️</div>
-                <h2 className="modal-title" style={{ marginBottom: 8 }}>
+              <div className="text-center py-2">
+                <div className="text-[48px] mb-4">⚠️</div>
+                <h2 className="modal-title mb-2">
                   Delete Employee?
                 </h2>
-                <p style={{ color: "var(--text-secondary)", fontSize: 14, marginBottom: 24 }}>
+                <p className="text-[var(--text-secondary)] text-sm mb-6">
                   This action cannot be undone. The employee will lose access immediately.
                 </p>
-                <div style={{ display: "flex", gap: 12 }}>
+                <div className="flex gap-3">
                   <button
-                    className="btn btn-ghost"
+                    className="btn btn-ghost flex-1"
                     onClick={() => setDeleteConfirm(null)}
-                    style={{ flex: 1 }}
                   >
                     Cancel
                   </button>
                   <button
-                    className="btn btn-danger"
+                    className="btn btn-danger flex-1"
                     onClick={() => handleDelete(deleteConfirm)}
                     disabled={deleteMutation.isPending}
-                    style={{ flex: 1 }}
                   >
                     {deleteMutation.isPending ? (
                       <>

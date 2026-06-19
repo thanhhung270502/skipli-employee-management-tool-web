@@ -51,8 +51,8 @@ export function EmployeeTasksPage() {
       <div>
         <div className="page-header">
           <div>
-            <div className="skeleton" style={{ width: 140, height: 32, marginBottom: 8 }} />
-            <div className="skeleton" style={{ width: 200, height: 16 }} />
+            <div className="skeleton w-[140px] h-8 mb-2" />
+            <div className="skeleton w-[200px] h-4" />
           </div>
         </div>
         <TaskListSkeleton count={4} />
@@ -80,20 +80,13 @@ export function EmployeeTasksPage() {
       ) : (
         <div>
           {pending.length > 0 && (
-            <div style={{ marginBottom: 32 }}>
+            <div className="mb-8">
               <h2
-                style={{
-                  fontSize: 14,
-                  fontWeight: 700,
-                  color: "var(--text-muted)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.08em",
-                  marginBottom: 16,
-                }}
+                className="text-sm font-bold text-[var(--text-muted)] uppercase tracking-wider mb-4"
               >
                 Pending ({pending.length})
               </h2>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <div className="flex flex-col gap-3">
                 {pending.map((task, i) => (
                   <EmployeeTaskCard
                     key={task.id}
@@ -109,20 +102,13 @@ export function EmployeeTasksPage() {
           )}
 
           {inProgress.length > 0 && (
-            <div style={{ marginBottom: 32 }}>
+            <div className="mb-8">
               <h2
-                style={{
-                  fontSize: 14,
-                  fontWeight: 700,
-                  color: "var(--info)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.08em",
-                  marginBottom: 16,
-                }}
+                className="text-sm font-bold text-[var(--info)] uppercase tracking-wider mb-4"
               >
                 In Progress ({inProgress.length})
               </h2>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <div className="flex flex-col gap-3">
                 {inProgress.map((task, i) => (
                   <EmployeeTaskCard
                     key={task.id}
@@ -140,18 +126,11 @@ export function EmployeeTasksPage() {
           {done.length > 0 && (
             <div>
               <h2
-                style={{
-                  fontSize: 14,
-                  fontWeight: 700,
-                  color: "var(--success)",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.08em",
-                  marginBottom: 16,
-                }}
+                className="text-sm font-bold text-[var(--success)] uppercase tracking-wider mb-4"
               >
                 Completed ({done.length})
               </h2>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <div className="flex flex-col gap-3">
                 {done.map((task, i) => (
                   <EmployeeTaskCard
                     key={task.id}
