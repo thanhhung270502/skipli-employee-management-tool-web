@@ -2,16 +2,27 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Send, MessageSquare } from "lucide-react";
 import { format } from "date-fns";
-import {
-  axiosInstance,
-  getUser,
-  connectSocket,
-  disconnectSocket,
-} from "@/common/lib";
+import { axiosInstance, getUser, connectSocket, disconnectSocket } from "@/common/lib";
 import { API_GET_MESSAGES } from "@/common/models/chat";
 import type { MessageObject, GetMessagesResponse } from "@/common/models/chat";
 import { logger } from "@/shared/libs";
 import { getTimestamp } from "@/shared/utils";
+import {
+  Avatar,
+  Button,
+  ChatMessage,
+  PageHeader,
+  PageLoading,
+  Typography,
+  TypingIndicator,
+  chatContainerClass,
+  chatHeaderClass,
+  chatInputAreaClass,
+  chatInputClass,
+  chatMainClass,
+  chatMessagesClass,
+  chatSendBtnClass,
+} from "@/shared/components";
 
 export function EmployeeChatPage() {
   const [messages, setMessages] = useState<MessageObject[]>([]);
@@ -115,103 +126,84 @@ export function EmployeeChatPage() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">Chat with Manager</h1>
-          <p className="page-subtitle">
-            {connected ? (
-              <span className="text-[var(--success)]">● Connected</span>
-            ) : (
-              <span className="text-[var(--text-muted)]">
-                ○ Connecting...
-              </span>
-            )}
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="Chat with Manager"
+        subtitle={
+          connected ? (
+            <Typography as="span" variant="small" color="success">
+              ● Connected
+            </Typography>
+          ) : (
+            <Typography as="span" variant="small" color="muted">
+              ○ Connecting...
+            </Typography>
+          )
+        }
+      />
 
-      <div
-        className="chat-container !h-[calc(100vh-160px)] !rounded-[var(--radius-lg)]"
-      >
-        <div className="chat-main">
-          <div className="chat-header">
-            <div className="avatar avatar-sm">M</div>
+      <div className="border-brand-primary bg-brand-primary-dark flex h-[calc(100vh-160px)] overflow-hidden rounded-2xl border">
+        <div className={chatMainClass}>
+          <div className={chatHeaderClass}>
+            <Avatar size="sm">M</Avatar>
             <div>
-              <p className="font-semibold text-[var(--text-primary)]">
+              <Typography variant="small" color="primary" className="font-semibold">
                 Manager
-              </p>
-              <p className="text-xs text-[var(--success)]">● Online</p>
+              </Typography>
+              <Typography variant="caption" color="success">
+                ● Online
+              </Typography>
             </div>
           </div>
 
-          <div className="chat-messages">
+          <div className={chatMessagesClass}>
             {loading ? (
-              <div className="page-loading !h-[200px]">
-                <div className="spinner spinner-primary" />
-              </div>
+              <PageLoading className="h-[200px]" />
             ) : messages.length === 0 ? (
-              <div
-                className="text-center py-[60px] px-6 text-[var(--text-muted)]"
-              >
+              <div className="px-6 py-15 text-center">
                 <MessageSquare
                   size={40}
-                  className="mx-auto mb-3 opacity-30"
+                  className="text-brand-primary-light mx-auto mb-3 opacity-30"
                 />
-                <p className="text-sm">
+                <Typography variant="small" color="muted">
                   No messages yet. Say hello to your manager! 👋
-                </p>
+                </Typography>
               </div>
             ) : (
               messages.map((msg) => {
                 const isMine = msg.senderRole === "employee";
                 return (
-                  <div
+                  <ChatMessage
                     key={msg.id}
-                    className={`chat-message ${isMine ? "sent" : ""}`}
-                  >
-                    {!isMine && <div className="avatar avatar-sm">M</div>}
-                    <div>
-                      <div
-                        className={`chat-bubble ${isMine ? "sent" : "received"}`}
-                      >
-                        {msg.text}
-                      </div>
-                      <div className="chat-timestamp">
-                        {formatMessageTime(msg.timestamp)}
-                      </div>
-                    </div>
-                  </div>
+                    isMine={isMine}
+                    text={msg.text}
+                    time={formatMessageTime(msg.timestamp)}
+                    avatar={!isMine ? <Avatar size="sm">M</Avatar> : undefined}
+                  />
                 );
               })
             )}
 
-            {isTyping && (
-              <div className="chat-typing">
-                <div className="typing-dot" />
-                <div className="typing-dot" />
-                <div className="typing-dot" />
-                <span className="ml-1">Manager is typing...</span>
-              </div>
-            )}
+            {isTyping && <TypingIndicator label="Manager is typing..." />}
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="chat-input-area">
+          <div className={chatInputAreaClass}>
             <textarea
-              className="chat-input"
+              className={chatInputClass}
               placeholder="Type a message... (Enter to send)"
               value={newMessage}
               onChange={handleTyping}
               onKeyDown={handleKeyDown}
               rows={1}
             />
-            <button
-              className="chat-send-btn"
+            <Button
+              variant="custom"
+              className={chatSendBtnClass}
               onClick={sendMessage}
               disabled={!newMessage.trim()}
             >
               <Send size={18} />
-            </button>
+            </Button>
           </div>
         </div>
       </div>

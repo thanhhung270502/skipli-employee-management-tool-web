@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { cn } from "@/shared/utils";
 
 interface OtpInputProps {
   otp: string[];
@@ -9,6 +10,9 @@ interface OtpInputProps {
   inputRefs: React.MutableRefObject<(HTMLInputElement | null)[]>;
 }
 
+const otpInputClassName =
+  "size-[52px] h-[60px] rounded-md border-2 border-brand-primary bg-brand-primary-dark-hover text-center text-2xl font-bold text-white outline-none transition-all focus:scale-105 focus:border-brand-primary-light focus:ring-[3px] focus:ring-brand-primary-light/20";
+
 export function OtpInput({
   otp,
   onChange,
@@ -17,7 +21,7 @@ export function OtpInput({
   inputRefs,
 }: OtpInputProps) {
   return (
-    <div className="otp-input-group" onPaste={onPaste}>
+    <div className="flex justify-center gap-2.5" onPaste={onPaste}>
       {otp.map((digit, i) => (
         <input
           key={i}
@@ -30,7 +34,7 @@ export function OtpInput({
           value={digit}
           onChange={(e) => onChange(i, e.target.value)}
           onKeyDown={(e) => onKeyDown(i, e)}
-          className="otp-input"
+          className={cn("w-[52px]", otpInputClassName)}
         />
       ))}
     </div>

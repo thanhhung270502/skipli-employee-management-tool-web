@@ -1,15 +1,22 @@
 "use client";
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import toast from "react-hot-toast";
-import { Plus, X } from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   useQueryEmployees,
   useCreateEmployeeMutation,
   useUpdateEmployeeMutation,
   useDeleteEmployeeMutation,
 } from "@/shared/hooks";
-import { TableSkeleton } from "@/shared/components";
+import {
+  Button,
+  EmptyState,
+  Input,
+  Modal,
+  PageHeader,
+  TableSkeleton,
+  Typography,
+} from "@/shared/components";
 import type { EmployeeObject } from "@/common/models/employee";
 import { useEmployeeForm } from "../hooks";
 import { EmployeeFormModal, EmployeeTable } from "../components";
@@ -83,22 +90,20 @@ export function EmployeesPage() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">Employees</h1>
-          <p className="page-subtitle">
-            {employees.length} team member{employees.length !== 1 ? "s" : ""}
-          </p>
-        </div>
-        <button className="btn btn-primary w-auto" onClick={openAddModal}>
-          <Plus size={16} /> Add Employee
-        </button>
-      </div>
+      <PageHeader
+        title="Employees"
+        subtitle={`${employees.length} team member${employees.length !== 1 ? "s" : ""}`}
+        action={
+          <Button variant="primary" className="w-auto" onClick={openAddModal}>
+            <Plus size={16} /> Add Employee
+          </Button>
+        }
+      />
 
       <div className="mb-6">
-        <input
+        <Input
           type="text"
-          className="form-input max-w-[400px]"
+          className="max-w-[400px]"
           placeholder="Search by name, email, or department..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -108,21 +113,20 @@ export function EmployeesPage() {
       {isLoading ? (
         <TableSkeleton rows={6} />
       ) : filtered.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-state-icon">👥</div>
-          <p className="empty-state-title">{search ? "No results found" : "No employees yet"}</p>
-          <p className="empty-state-desc">
-            {search ? "Try a different search term" : "Add your first employee to get started"}
-          </p>
-          {!search && (
-            <button
-              className="btn btn-primary w-auto mt-4"
-              onClick={openAddModal}
-            >
-              <Plus size={16} /> Add Employee
-            </button>
-          )}
-        </div>
+        <EmptyState
+          icon="👥"
+          title={search ? "No results found" : "No employees yet"}
+          description={
+            search ? "Try a different search term" : "Add your first employee to get started"
+          }
+          action={
+            !search ? (
+              <Button variant="primary" className="mt-4 w-auto" onClick={openAddModal}>
+                <Plus size={16} /> Add Employee
+              </Button>
+            ) : undefined
+          }
+        />
       ) : (
         <EmployeeTable employees={filtered} onEdit={openEditModal} onDelete={setDeleteConfirm} />
       )}
@@ -136,58 +140,33 @@ export function EmployeesPage() {
         isSubmitting={isSubmitting}
       />
 
-      {/* Delete Confirm Modal */}
-      <AnimatePresence>
-        {deleteConfirm && (
-          <motion.div
-            className="modal-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={(e) => {
-              if (e.target === e.currentTarget) setDeleteConfirm(null);
-            }}
-          >
-            <motion.div
-              className="modal !max-w-[380px]"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+      <Modal
+        open={!!deleteConfirm}
+        onClose={() => setDeleteConfirm(null)}
+        title="Delete Employee?"
+        maxWidthClassName="max-w-[380px]"
+      >
+        <div className="py-2 text-center">
+          <div className="mb-4 text-[48px]">⚠️</div>
+          <Typography variant="small" color="muted" className="mb-6">
+            This action cannot be undone. The employee will lose access immediately.
+          </Typography>
+          <div className="flex gap-3">
+            <Button variant="ghost" className="flex-1" onClick={() => setDeleteConfirm(null)}>
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              className="flex-1"
+              onClick={() => deleteConfirm && handleDelete(deleteConfirm)}
+              loading={deleteMutation.isPending}
+              loadingText="Deleting..."
             >
-              <div className="text-center py-2">
-                <div className="text-[48px] mb-4">⚠️</div>
-                <h2 className="modal-title mb-2">
-                  Delete Employee?
-                </h2>
-                <p className="text-[var(--text-secondary)] text-sm mb-6">
-                  This action cannot be undone. The employee will lose access immediately.
-                </p>
-                <div className="flex gap-3">
-                  <button
-                    className="btn btn-ghost flex-1"
-                    onClick={() => setDeleteConfirm(null)}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className="btn btn-danger flex-1"
-                    onClick={() => handleDelete(deleteConfirm)}
-                    disabled={deleteMutation.isPending}
-                  >
-                    {deleteMutation.isPending ? (
-                      <>
-                        <span className="spinner" /> Deleting...
-                      </>
-                    ) : (
-                      "Delete"
-                    )}
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              Delete
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

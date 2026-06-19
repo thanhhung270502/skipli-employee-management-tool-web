@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 import { CheckCircle, Clock, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import type { TaskObject } from "@/common/models/task";
-import { Badge } from "@/shared/components";
-
+import { Badge, Button, Card, Typography } from "@/shared/components";
+import { cn } from "@/shared/utils";
 
 interface EmployeeTaskCardProps {
   task: TaskObject;
@@ -26,7 +26,7 @@ const getDate = (ts: unknown): Date | null => {
         const d = t.toDate();
         return isNaN(d.getTime()) ? null : d;
       } catch {
-        // ignore
+        return null;
       }
     }
     const secs = t._seconds ?? t.seconds;
@@ -54,44 +54,40 @@ export function EmployeeTaskCard({
   if (task.status === "done") {
     return (
       <motion.div
-        className="card flex items-start gap-4 opacity-70"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: index * 0.04 }}
       >
-        <div
-          className="w-5 h-5 rounded-full shrink-0 mt-0.5 bg-[var(--success)] flex items-center justify-center"
-        >
-          <CheckCircle size={12} className="text-white" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2.5 flex-wrap mb-1">
-            <h3
-              className="text-[15px] font-semibold text-[var(--text-secondary)] line-through"
-            >
-              {task.title}
-            </h3>
-            <Badge
-              variant={
-                task.priority === "high"
-                  ? "danger"
-                  : task.priority === "medium"
-                  ? "purple"
-                  : "neutral"
-              }
-              className="capitalize opacity-70"
-            >
-              {task.priority || "medium"}
-            </Badge>
+        <Card className="flex items-start gap-4 opacity-70">
+          <div className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-success">
+            <CheckCircle size={12} className="text-white" />
           </div>
-          {completedAt && (
-            <span className="text-xs text-[var(--success)]">
-              ✓ Completed {format(completedAt, "MMM d, yyyy")}
-            </span>
-          )}
-        </div>
-        <Badge variant="success">Done</Badge>
-
+          <div className="min-w-0 flex-1">
+            <div className="mb-1 flex flex-wrap items-center gap-2.5">
+              <Typography variant="small" color="muted" className="font-semibold line-through">
+                {task.title}
+              </Typography>
+              <Badge
+                variant={
+                  task.priority === "high"
+                    ? "danger"
+                    : task.priority === "medium"
+                      ? "purple"
+                      : "neutral"
+                }
+                className="capitalize opacity-70"
+              >
+                {task.priority || "medium"}
+              </Badge>
+            </div>
+            {completedAt && (
+              <Typography variant="caption" color="success">
+                ✓ Completed {format(completedAt, "MMM d, yyyy")}
+              </Typography>
+            )}
+          </div>
+          <Badge variant="success">Done</Badge>
+        </Card>
       </motion.div>
     );
   }
@@ -100,92 +96,75 @@ export function EmployeeTaskCard({
 
   return (
     <motion.div
-      className="card flex items-start gap-4"
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.06 }}
     >
-      <div
-        className={`w-5 h-5 rounded-full shrink-0 mt-0.5 border-2 bg-transparent flex items-center justify-center ${
-          isInProgress ? "border-[var(--info)]" : "border-[var(--warning)]"
-        }`}
-      >
-        <Clock size={10} className={isInProgress ? "text-[var(--info)]" : "text-[var(--warning)]"} />
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2.5 flex-wrap mb-1">
-          <h3
-            className="text-[15px] font-semibold text-[var(--text-primary)]"
-          >
-            {task.title}
-          </h3>
-          <Badge
-            variant={
-              task.priority === "high"
-                ? "danger"
-                : task.priority === "medium"
-                ? "purple"
-                : "neutral"
-            }
-            className="capitalize"
-          >
-            {task.priority || "medium"}
-          </Badge>
-          {isInProgress && (
-            <Badge variant="info">In Progress</Badge>
+      <Card className="flex items-start gap-4">
+        <div
+          className={cn(
+            "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border-2 bg-transparent",
+            isInProgress ? "border-blue" : "border-warning"
+          )}
+        >
+          <Clock size={10} className={isInProgress ? "text-blue" : "text-warning"} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="mb-1 flex flex-wrap items-center gap-2.5">
+            <Typography variant="small" color="primary" className="font-semibold">
+              {task.title}
+            </Typography>
+            <Badge
+              variant={
+                task.priority === "high"
+                  ? "danger"
+                  : task.priority === "medium"
+                    ? "purple"
+                    : "neutral"
+              }
+              className="capitalize"
+            >
+              {task.priority || "medium"}
+            </Badge>
+            {isInProgress && <Badge variant="info">In Progress</Badge>}
+          </div>
+
+          {task.description && (
+            <Typography variant="small" color="muted" className="mb-2">
+              {task.description}
+            </Typography>
+          )}
+          {dueDate && (
+            <Typography variant="caption" color="muted" className="flex items-center gap-1">
+              <Calendar size={11} />
+              Due {format(dueDate, "MMM d, yyyy")}
+            </Typography>
           )}
         </div>
-
-        {task.description && (
-          <p className="text-[13px] text-[var(--text-secondary)] mb-2">
-            {task.description}
-          </p>
-        )}
-        {dueDate && (
-          <span
-            className="text-xs text-[var(--text-muted)] flex items-center gap-1"
+        {isInProgress ? (
+          <Button
+            variant="success"
+            size="sm"
+            className="w-auto shrink-0"
+            onClick={() => onMarkDone(task.id)}
+            loading={isUpdating}
+            loadingText="Updating..."
           >
-            <Calendar size={11} />
-            Due {format(dueDate, "MMM d, yyyy")}
-          </span>
+            <CheckCircle size={14} /> Complete
+          </Button>
+        ) : (
+          <Button
+            variant="secondary"
+            size="sm"
+            className="w-auto shrink-0"
+            onClick={() => onStartTask(task.id)}
+            loading={isUpdating}
+            loadingText="Updating..."
+          >
+            Start Task
+          </Button>
         )}
-      </div>
-      {isInProgress ? (
-        <button
-          className="btn btn-success btn-sm w-auto shrink-0"
-          onClick={() => onMarkDone(task.id)}
-          disabled={isUpdating}
-        >
-          {isUpdating ? (
-            <>
-              <span className="spinner w-3.5 h-3.5 border-2" />
-              Updating...
-            </>
-          ) : (
-            <>
-              <CheckCircle size={14} /> Complete
-            </>
-          )}
-        </button>
-      ) : (
-        <button
-          className="btn btn-secondary btn-sm w-auto shrink-0"
-          onClick={() => onStartTask(task.id)}
-          disabled={isUpdating}
-        >
-          {isUpdating ? (
-            <>
-              <span className="spinner w-3.5 h-3.5 border-2" />
-              Updating...
-            </>
-          ) : (
-            <>
-              Start Task
-            </>
-          )}
-        </button>
-      )}
+      </Card>
     </motion.div>
   );
 }
-

@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getUser } from "@/common/lib";
+import { PageLoading, Typography } from "@/shared/components";
 
 export default function HomePage() {
   const router = useRouter();
@@ -18,9 +19,10 @@ export default function HomePage() {
   }, [router]);
 
   return (
-    <div className="page-loading">
-      <div className="spinner spinner-primary" />
-      <span>Redirecting...</span>
-    </div>
+    <PageLoading className="min-h-screen">
+      <Typography variant="small" color="muted">
+        Redirecting...
+      </Typography>
+    </PageLoading>
   );
 }

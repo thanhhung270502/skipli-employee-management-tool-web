@@ -1,10 +1,10 @@
 "use client";
-import { motion, AnimatePresence } from "framer-motion";
-import { X, User, Mail, Phone, Building } from "lucide-react";
+import { Building, Mail, Phone, User } from "lucide-react";
 import { FormProvider, useFormContext } from "react-hook-form";
 import type { UseFormReturn } from "react-hook-form";
 import type { EmployeeObject } from "@/common/models/employee";
 import type { EmployeeFormData } from "../hooks/use-employee-form";
+import { Button, FormField, Input, Modal } from "@/shared/components";
 
 interface EmployeeFormModalProps {
   open: boolean;
@@ -23,84 +23,64 @@ function EmployeeFormFields({ editEmployee }: { editEmployee: EmployeeObject | n
 
   return (
     <>
-      <div className="form-group">
-        <label className="form-label">
-          <User size={12} className="inline mr-1" />
-          Full Name
-        </label>
-        <input
-          className="form-input"
-          placeholder="John Doe"
-          {...register("name")}
-        />
-        {errors.name && (
-          <p className="form-hint !text-[var(--danger)]">
-            {errors.name.message}
-          </p>
-        )}
-      </div>
+      <FormField
+        label={
+          <>
+            <User size={12} className="mr-1 inline" />
+            Full Name
+          </>
+        }
+        error={errors.name?.message}
+      >
+        <Input placeholder="John Doe" {...register("name")} />
+      </FormField>
 
-      <div className="form-group">
-        <label className="form-label">
-          <Mail size={12} className="inline mr-1" />
-          Email
-        </label>
-        <input
+      <FormField
+        label={
+          <>
+            <Mail size={12} className="mr-1 inline" />
+            Email
+          </>
+        }
+        error={errors.email?.message}
+        hint={!editEmployee ? "An invite email will be sent to this address" : undefined}
+      >
+        <Input
           type="email"
-          className="form-input"
           placeholder="john@company.com"
           disabled={!!editEmployee}
           {...register("email")}
         />
-        {errors.email && (
-          <p className="form-hint !text-[var(--danger)]">
-            {errors.email.message}
-          </p>
-        )}
-        {!editEmployee && (
-          <p className="form-hint">An invite email will be sent to this address</p>
-        )}
+      </FormField>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <FormField
+          label={
+            <>
+              <Phone size={12} className="mr-1 inline" />
+              Phone
+            </>
+          }
+        >
+          <Input type="tel" placeholder="+1 234 567 8900" {...register("phone")} />
+        </FormField>
+
+        <FormField
+          label={
+            <>
+              <Building size={12} className="mr-1 inline" />
+              Department
+            </>
+          }
+          error={errors.department?.message}
+        >
+          <Input placeholder="Engineering" {...register("department")} />
+        </FormField>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="form-group">
-          <label className="form-label">
-            <Phone size={12} className="inline mr-1" />
-            Phone
-          </label>
-          <input
-            type="tel"
-            className="form-input"
-            placeholder="+1 234 567 8900"
-            {...register("phone")}
-          />
-        </div>
-        <div className="form-group">
-          <label className="form-label">
-            <Building size={12} className="inline mr-1" />
-            Department
-          </label>
-          <input
-            className="form-input"
-            placeholder="Engineering"
-            {...register("department")}
-          />
-          {errors.department && (
-            <p className="form-hint !text-[var(--danger)]">
-              {errors.department.message}
-            </p>
-          )}
-        </div>
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">Job Role</label>
-        <input
-          className="form-input"
-          placeholder="Software Engineer"
-          {...register("role")}
-        />
-      </div>
+      <FormField label="Job Role">
+        <Input placeholder="Software Engineer" {...register("role")} />
+      </FormField>
     </>
   );
 }
@@ -114,65 +94,30 @@ export function EmployeeFormModal({
   isSubmitting,
 }: EmployeeFormModalProps) {
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          className="modal-overlay"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) onClose();
-          }}
-        >
-          <motion.div
-            className="modal"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-          >
-            <div className="modal-header">
-              <h2 className="modal-title">
-                {editEmployee ? "Edit Employee" : "Add New Employee"}
-              </h2>
-              <button className="modal-close" onClick={onClose}>
-                <X size={16} />
-              </button>
-            </div>
-
-            <FormProvider {...methods}>
-              <form onSubmit={onSubmit}>
-                <EmployeeFormFields editEmployee={editEmployee} />
-                <div className="flex gap-3 mt-2">
-                  <button
-                    type="button"
-                    className="btn btn-ghost flex-1"
-                    onClick={onClose}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="btn btn-primary !flex-[2]"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <span className="spinner" />{" "}
-                        {editEmployee ? "Saving..." : "Creating..."}
-                      </>
-                    ) : editEmployee ? (
-                      "Save Changes"
-                    ) : (
-                      "Add & Send Invite"
-                    )}
-                  </button>
-                </div>
-              </form>
-            </FormProvider>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={editEmployee ? "Edit Employee" : "Add New Employee"}
+    >
+      <FormProvider {...methods}>
+        <form onSubmit={onSubmit}>
+          <EmployeeFormFields editEmployee={editEmployee} />
+          <div className="mt-2 flex gap-3">
+            <Button type="button" variant="ghost" className="flex-1" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              className="flex-2!"
+              loading={isSubmitting}
+              loadingText={editEmployee ? "Saving..." : "Creating..."}
+            >
+              {editEmployee ? "Save Changes" : "Add & Send Invite"}
+            </Button>
+          </div>
+        </form>
+      </FormProvider>
+    </Modal>
   );
 }

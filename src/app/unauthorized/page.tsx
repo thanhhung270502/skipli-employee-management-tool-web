@@ -1,6 +1,6 @@
 "use client";
-import Link from "next/link";
 import { clearUser, getUser } from "@/common/lib";
+import { Button, ErrorPageLayout } from "@/shared/components";
 
 export default function UnauthorizedPage() {
   const user = getUser();
@@ -13,23 +13,20 @@ export default function UnauthorizedPage() {
   };
 
   return (
-    <div className="error-page">
-      <div className="error-page-content">
-        <p className="error-page-code">403</p>
-        <h1 className="error-page-title">Access denied</h1>
-        <p className="error-page-desc">
-          You don&apos;t have permission to view this page. Sign in with the correct account or
-          return to your dashboard.
-        </p>
-        <div className="error-page-actions">
-          <Link href={homeHref} className="btn btn-primary w-auto">
+    <ErrorPageLayout
+      code="403"
+      title="Access denied"
+      description="You don't have permission to view this page. Sign in with the correct account or return to your dashboard."
+      actions={
+        <>
+          <Button href={homeHref} variant="primary" className="w-auto">
             Go to dashboard
-          </Link>
-          <button type="button" className="btn btn-ghost w-auto" onClick={handleSignOut}>
+          </Button>
+          <Button type="button" variant="ghost" className="w-auto" onClick={handleSignOut}>
             Sign in again
-          </button>
-        </div>
-      </div>
-    </div>
+          </Button>
+        </>
+      }
+    />
   );
 }

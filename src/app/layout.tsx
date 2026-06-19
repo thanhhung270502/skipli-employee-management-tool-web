@@ -5,8 +5,7 @@ import { ReactQueryProvider } from "@/shared/components";
 
 export const metadata: Metadata = {
   title: "Skipli — Employee Task Management",
-  description:
-    "Real-time employee task management tool for managers and employees.",
+  description: "Real-time employee task management tool for managers and employees.",
   keywords: ["employee management", "task management", "real-time", "skipli"],
 };
 
@@ -17,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="bg-brand-primary">
         <ReactQueryProvider>
           {children}
           <Toaster

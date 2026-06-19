@@ -8,12 +8,11 @@ import {
   useCreateTaskMutation,
   useUpdateTaskMutation,
 } from "@/shared/hooks";
-import { TaskListSkeleton, Skeleton } from "@/shared/components";
+import { Button, EmptyState, PageHeader, Skeleton, TaskListSkeleton } from "@/shared/components";
 import { formatToInputDate } from "@/shared/utils";
 import { useTaskForm } from "../hooks";
 import { TaskCard, TaskFormModal } from "../components";
 import type { TaskObject } from "@/common/models/task";
-
 
 export function TasksPage() {
   const { data: taskData, isLoading: tasksLoading } = useQueryAllTasks();
@@ -77,14 +76,18 @@ export function TasksPage() {
 
   const filtered = tasks.filter((t) => (filter === "all" ? true : t.status === filter));
 
+  const openCreateModal = () => {
+    setEditingTask(null);
+    reset();
+    setModalOpen(true);
+  };
+
   if (tasksLoading) {
     return (
       <div>
-        <div className="page-header">
-          <div>
-            <Skeleton width={120} height={32} className="mb-2" />
-            <Skeleton width={180} height={16} />
-          </div>
+        <div className="mb-8">
+          <Skeleton width={120} height={32} className="mb-2" />
+          <Skeleton width={180} height={16} />
         </div>
         <TaskListSkeleton count={5} />
       </div>
@@ -93,31 +96,23 @@ export function TasksPage() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">Tasks</h1>
-          <p className="page-subtitle">
-            {tasks.length} total task{tasks.length !== 1 ? "s" : ""}
-          </p>
-        </div>
-        <button
-          className="btn btn-primary w-auto"
-          onClick={() => {
-            setEditingTask(null);
-            reset();
-            setModalOpen(true);
-          }}
-        >
-          <Plus size={16} /> Create Task
-        </button>
-      </div>
+      <PageHeader
+        title="Tasks"
+        subtitle={`${tasks.length} total task${tasks.length !== 1 ? "s" : ""}`}
+        action={
+          <Button variant="secondary" className="w-auto" onClick={openCreateModal}>
+            <Plus size={16} /> Create Task
+          </Button>
+        }
+      />
 
-      {/* Filter Tabs */}
-      <div className="flex gap-2 mb-6 flex-wrap">
+      <div className="mb-6 flex flex-wrap gap-2">
         {(["all", "pending", "in_progress", "done"] as const).map((f) => (
-          <button
+          <Button
             key={f}
-            className={`btn btn-sm w-auto capitalize ${filter === f ? "btn-secondary" : "btn-ghost"}`}
+            variant={filter === f ? "secondary" : "ghost"}
+            size="sm"
+            className="w-auto capitalize"
             onClick={() => setFilter(f)}
           >
             {f === "in_progress" ? "In Progress" : f}{" "}
@@ -128,28 +123,21 @@ export function TasksPage() {
                 : f === "in_progress"
                   ? `(${tasks.filter((t) => t.status === "in_progress").length})`
                   : `(${tasks.filter((t) => t.status === "done").length})`}
-          </button>
+          </Button>
         ))}
       </div>
 
       {filtered.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-state-icon">📋</div>
-          <p className="empty-state-title">
-            No {filter !== "all" ? (filter === "in_progress" ? "in progress" : filter) : ""} tasks
-          </p>
-          <p className="empty-state-desc">Create a task and assign it to an employee</p>
-          <button
-            className="btn btn-primary w-auto mt-4"
-            onClick={() => {
-              setEditingTask(null);
-              reset();
-              setModalOpen(true);
-            }}
-          >
-            <Plus size={16} /> Create Task
-          </button>
-        </div>
+        <EmptyState
+          icon="📋"
+          title={`No ${filter !== "all" ? (filter === "in_progress" ? "in progress" : filter) : ""} tasks`}
+          description="Create a task and assign it to an employee"
+          action={
+            <Button variant="primary" className="mt-4 w-auto" onClick={openCreateModal}>
+              <Plus size={16} /> Create Task
+            </Button>
+          }
+        />
       ) : (
         <div className="flex flex-col gap-3">
           {filtered.map((task, i) => (
@@ -174,4 +162,3 @@ export function TasksPage() {
     </div>
   );
 }
-

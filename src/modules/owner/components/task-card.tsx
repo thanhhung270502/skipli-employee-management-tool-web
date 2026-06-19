@@ -5,14 +5,15 @@ import { Calendar, Edit2, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import type { TaskObject } from "@/common/models/task";
 import { useDeleteTaskMutation } from "@/shared/hooks";
-import { getTimestamp } from "@/shared/utils";
-import { Badge } from "@/shared/components";
+import { getTimestamp, cn } from "@/shared/utils";
+import { Badge, Button, Card, Typography } from "@/shared/components";
 
 interface TaskCardProps {
   task: TaskObject;
   index: number;
   onEdit?: () => void;
 }
+
 export function TaskCard({ task, index, onEdit }: TaskCardProps) {
   const dueDate = getTimestamp(task.dueDate);
   const deleteMutation = useDeleteTaskMutation();
@@ -33,104 +34,84 @@ export function TaskCard({ task, index, onEdit }: TaskCardProps) {
     }
   };
 
-  const getStatusClasses = () => {
-    switch (task.status) {
-      case "done":
-        return "bg-[var(--success)] shadow-[0_0_8px_rgba(16,185,129,0.4)]";
-      case "in_progress":
-        return "bg-[var(--info)] shadow-[0_0_8px_rgba(59,130,246,0.4)]";
-      default:
-        return "bg-[var(--warning)] shadow-[0_0_8px_rgba(245,158,11,0.4)]";
-    }
-  };
+  const statusDotClass = cn(
+    "mt-1 size-3 shrink-0 rounded-full",
+    task.status === "done" && "bg-success shadow-[0_0_8px_rgba(16,185,129,0.4)]",
+    task.status === "in_progress" && "bg-blue shadow-[0_0_8px_rgba(59,130,246,0.4)]",
+    task.status === "pending" && "bg-warning shadow-[0_0_8px_rgba(245,158,11,0.4)]"
+  );
 
   return (
     <motion.div
-      className="card flex items-start gap-4"
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.04 }}
     >
-      <div className={`w-3 h-3 rounded-full shrink-0 mt-1 ${getStatusClasses()}`} />
-      <div className="flex-1 min-w-0">
-        <div
-          className="flex items-center gap-2.5 flex-wrap"
-        >
-          <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">
-            {task.title}
-          </h3>
-          <Badge
-            variant={
-              task.status === "done"
-                ? "success"
-                : task.status === "in_progress"
-                ? "info"
-                : "warning"
-            }
-            className="capitalize"
-          >
-            {task.status === "in_progress" ? "In Progress" : task.status}
-          </Badge>
-          <Badge
-            variant={
-              task.priority === "high"
-                ? "danger"
-                : task.priority === "medium"
-                ? "purple"
-                : "neutral"
-            }
-            className="capitalize"
-          >
-            {task.priority || "medium"}
-          </Badge>
-        </div>
-        {task.description && (
-          <p
-            className="text-[13px] text-[var(--text-secondary)] mt-1"
-          >
-            {task.description}
-          </p>
-        )}
-        <div
-          className="flex gap-4 mt-2 flex-wrap"
-        >
-          <span
-            className="text-xs text-[var(--text-muted)] flex items-center gap-1"
-          >
-            👤 {task.assignedToName}
-          </span>
-          {dueDate && (
-            <span
-              className="text-xs text-[var(--text-muted)] flex items-center gap-1"
+      <Card className="flex items-center gap-4">
+        <div className={statusDotClass} />
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <Typography variant="small" color="primary" className="font-semibold">
+              {task.title}
+            </Typography>
+            <Badge
+              variant={
+                task.status === "done"
+                  ? "success"
+                  : task.status === "in_progress"
+                    ? "info"
+                    : "warning"
+              }
+              className="capitalize"
             >
-              <Calendar size={11} />
-              {dueDate.toLocaleDateString()}
-            </span>
+              {task.status === "in_progress" ? "In Progress" : task.status}
+            </Badge>
+            <Badge
+              variant={
+                task.priority === "high"
+                  ? "danger"
+                  : task.priority === "medium"
+                    ? "purple"
+                    : "neutral"
+              }
+              className="capitalize"
+            >
+              {task.priority || "medium"}
+            </Badge>
+          </div>
+          {task.description && (
+            <Typography variant="small" color="muted" className="mt-1">
+              {task.description}
+            </Typography>
           )}
+          <div className="mt-2 flex flex-wrap gap-4">
+            <Typography variant="caption" color="muted" className="flex items-center gap-1">
+              👤 {task.assignedToName}
+            </Typography>
+            {dueDate && (
+              <Typography variant="caption" color="muted" className="flex items-center gap-1">
+                <Calendar size={11} />
+                {dueDate.toLocaleDateString()}
+              </Typography>
+            )}
+          </div>
         </div>
-      </div>
-      <div className="flex gap-2 ml-auto shrink-0">
-        <button
-          className="btn btn-icon btn-ghost w-8 h-8"
-          onClick={onEdit}
-          title="Edit Task"
-        >
-          <Edit2 size={13} />
-        </button>
-        <button
-          className="btn btn-icon btn-danger w-8 h-8"
-          onClick={handleDelete}
-          disabled={isDeleting}
-          title="Delete Task"
-        >
-          {isDeleting ? (
-            <span className="spinner w-3 h-3 border-2" />
-          ) : (
+        <div className="ml-auto flex shrink-0 gap-2">
+          <Button variant="ghost" iconOnly className="size-8" onClick={onEdit} title="Edit Task">
+            <Edit2 size={13} />
+          </Button>
+          <Button
+            variant="danger"
+            iconOnly
+            className="size-8"
+            onClick={handleDelete}
+            loading={isDeleting}
+            title="Delete Task"
+          >
             <Trash2 size={13} />
-          )}
-        </button>
-      </div>
+          </Button>
+        </div>
+      </Card>
     </motion.div>
   );
 }
-

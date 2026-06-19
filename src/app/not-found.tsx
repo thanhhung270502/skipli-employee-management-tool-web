@@ -1,23 +1,21 @@
-import Link from "next/link";
+import { Button, ErrorPageLayout } from "@/shared/components";
 
 export default function NotFound() {
   return (
-    <div className="error-page">
-      <div className="error-page-content">
-        <p className="error-page-code">404</p>
-        <h1 className="error-page-title">Page not found</h1>
-        <p className="error-page-desc">
-          The page you&apos;re looking for doesn&apos;t exist or has been moved.
-        </p>
-        <div className="error-page-actions">
-          <Link href="/" className="btn btn-primary w-auto">
+    <ErrorPageLayout
+      code="404"
+      title="Page not found"
+      description="The page you're looking for doesn't exist or has been moved."
+      actions={
+        <>
+          <Button href="/" variant="primary" className="w-auto">
             Go home
-          </Link>
-          <Link href="/login" className="btn btn-ghost w-auto">
+          </Button>
+          <Button href="/login" variant="ghost" className="w-auto">
             Sign in
-          </Link>
-        </div>
-      </div>
-    </div>
+          </Button>
+        </>
+      }
+    />
   );
 }

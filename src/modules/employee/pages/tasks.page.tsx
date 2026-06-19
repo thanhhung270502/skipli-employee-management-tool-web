@@ -6,7 +6,13 @@ import {
   useMarkTaskDoneMutation,
   useMarkTaskInProgressMutation,
 } from "@/shared/hooks";
-import { TaskListSkeleton } from "@/shared/components";
+import {
+  EmptyState,
+  PageHeader,
+  Skeleton,
+  TaskListSkeleton,
+  Typography,
+} from "@/shared/components";
 import { EmployeeTaskCard } from "../components";
 
 export function EmployeeTasksPage() {
@@ -49,11 +55,9 @@ export function EmployeeTasksPage() {
   if (isLoading) {
     return (
       <div>
-        <div className="page-header">
-          <div>
-            <div className="skeleton w-[140px] h-8 mb-2" />
-            <div className="skeleton w-[200px] h-4" />
-          </div>
+        <div className="mb-8">
+          <Skeleton width={140} height={32} className="mb-2" />
+          <Skeleton width={200} height={16} />
         </div>
         <TaskListSkeleton count={4} />
       </div>
@@ -62,30 +66,24 @@ export function EmployeeTasksPage() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">My Tasks</h1>
-          <p className="page-subtitle">
-            {pending.length} pending · {inProgress.length} in progress · {done.length} completed
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title="My Tasks"
+        subtitle={`${pending.length} pending · ${inProgress.length} in progress · ${done.length} completed`}
+      />
 
       {tasks.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-state-icon">🎯</div>
-          <p className="empty-state-title">No tasks yet</p>
-          <p className="empty-state-desc">Your manager will assign tasks to you soon</p>
-        </div>
+        <EmptyState
+          icon="🎯"
+          title="No tasks yet"
+          description="Your manager will assign tasks to you soon"
+        />
       ) : (
         <div>
           {pending.length > 0 && (
             <div className="mb-8">
-              <h2
-                className="text-sm font-bold text-[var(--text-muted)] uppercase tracking-wider mb-4"
-              >
+              <Typography variant="overline" color="muted" className="mb-4">
                 Pending ({pending.length})
-              </h2>
+              </Typography>
               <div className="flex flex-col gap-3">
                 {pending.map((task, i) => (
                   <EmployeeTaskCard
@@ -103,11 +101,9 @@ export function EmployeeTasksPage() {
 
           {inProgress.length > 0 && (
             <div className="mb-8">
-              <h2
-                className="text-sm font-bold text-[var(--info)] uppercase tracking-wider mb-4"
-              >
+              <Typography variant="overline" color="accent" className="mb-4 text-blue">
                 In Progress ({inProgress.length})
-              </h2>
+              </Typography>
               <div className="flex flex-col gap-3">
                 {inProgress.map((task, i) => (
                   <EmployeeTaskCard
@@ -125,11 +121,9 @@ export function EmployeeTasksPage() {
 
           {done.length > 0 && (
             <div>
-              <h2
-                className="text-sm font-bold text-[var(--success)] uppercase tracking-wider mb-4"
-              >
+              <Typography variant="overline" color="success" className="mb-4">
                 Completed ({done.length})
-              </h2>
+              </Typography>
               <div className="flex flex-col gap-3">
                 {done.map((task, i) => (
                   <EmployeeTaskCard
@@ -149,4 +143,3 @@ export function EmployeeTasksPage() {
     </div>
   );
 }
-

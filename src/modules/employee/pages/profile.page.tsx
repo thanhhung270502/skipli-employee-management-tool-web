@@ -3,162 +3,128 @@ import { motion } from "framer-motion";
 import { FormProvider } from "react-hook-form";
 import { User, Mail, Phone, Save } from "lucide-react";
 import { useProfileForm } from "../hooks";
-import { Badge } from "@/shared/components";
-
+import {
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  CardHeader,
+  CardTitle,
+  Divider,
+  FormField,
+  Input,
+  PageHeader,
+  PageLoading,
+  Typography,
+} from "@/shared/components";
 
 export function EmployeeProfilePage() {
-  const { profile, loading, methods, onSubmit, isSaving, isDirty } =
-    useProfileForm();
+  const { profile, loading, methods, onSubmit, isSaving, isDirty } = useProfileForm();
 
   if (loading) {
-    return (
-      <div className="page-loading">
-        <div className="spinner spinner-primary" />
-      </div>
-    );
+    return <PageLoading className="min-h-[300px]" />;
   }
 
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">My Profile</h1>
-          <p className="page-subtitle">Manage your personal information</p>
-        </div>
-      </div>
+      <PageHeader title="My Profile" subtitle="Manage your personal information" />
 
       <div className="max-w-[600px]">
-        <motion.div
-          className="card flex items-center gap-5 mb-6"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <div className="avatar avatar-lg !text-[28px]">
-            {profile?.name?.[0]?.toUpperCase() ?? "?"}
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-[var(--text-primary)]">
-              {profile?.name}
-            </h2>
-            <p className="text-sm text-[var(--text-secondary)]">
-              {profile?.role} · {profile?.department}
-            </p>
-            <Badge
-              variant={profile?.isSetup ? "success" : "warning"}
-              className="mt-2"
-            >
-              {profile?.isSetup ? "✓ Active Account" : "Pending Setup"}
-            </Badge>
-
-          </div>
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+          <Card className="mb-6 flex items-center gap-5">
+            <Avatar size="lg" className="text-[28px]">
+              {profile?.name?.[0]?.toUpperCase() ?? "?"}
+            </Avatar>
+            <div>
+              <Typography variant="h4" color="primary">
+                {profile?.name}
+              </Typography>
+              <Typography variant="small" color="muted">
+                {profile?.role} · {profile?.department}
+              </Typography>
+              <Badge variant={profile?.isSetup ? "success" : "warning"} className="mt-2">
+                {profile?.isSetup ? "✓ Active Account" : "Pending Setup"}
+              </Badge>
+            </div>
+          </Card>
         </motion.div>
 
         <motion.div
-          className="card"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <div className="card-header">
-            <span className="card-title">Edit Information</span>
-            {isDirty && (
-              <Badge variant="warning">Unsaved changes</Badge>
+          <Card>
+            <CardHeader>
+              <CardTitle>Edit Information</CardTitle>
+              {isDirty && <Badge variant="warning">Unsaved changes</Badge>}
+            </CardHeader>
 
-            )}
-          </div>
+            <FormProvider {...methods}>
+              <form onSubmit={onSubmit}>
+                <FormField
+                  label={
+                    <>
+                      <User size={12} className="mr-1 inline" />
+                      Full Name
+                    </>
+                  }
+                  error={methods.formState.errors.name?.message}
+                >
+                  <Input {...methods.register("name")} />
+                </FormField>
 
-          <FormProvider {...methods}>
-            <form onSubmit={onSubmit}>
-              <div className="form-group">
-                <label className="form-label">
-                  <User size={12} className="inline mr-1" />
-                  Full Name
-                </label>
-                <input
-                  className="form-input"
-                  {...methods.register("name")}
-                />
-                {methods.formState.errors.name && (
-                  <p className="form-hint !text-[var(--danger)]">
-                    {methods.formState.errors.name.message}
-                  </p>
-                )}
-              </div>
+                <FormField
+                  label={
+                    <>
+                      <Mail size={12} className="mr-1 inline" />
+                      Email Address
+                    </>
+                  }
+                  error={methods.formState.errors.email?.message}
+                >
+                  <Input type="email" {...methods.register("email")} />
+                </FormField>
 
-              <div className="form-group">
-                <label className="form-label">
-                  <Mail size={12} className="inline mr-1" />
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  className="form-input"
-                  {...methods.register("email")}
-                />
-                {methods.formState.errors.email && (
-                  <p className="form-hint !text-[var(--danger)]">
-                    {methods.formState.errors.email.message}
-                  </p>
-                )}
-              </div>
+                <FormField
+                  label={
+                    <>
+                      <Phone size={12} className="mr-1 inline" />
+                      Phone Number
+                    </>
+                  }
+                >
+                  <Input type="tel" placeholder="+1 234 567 8900" {...methods.register("phone")} />
+                </FormField>
 
-              <div className="form-group">
-                <label className="form-label">
-                  <Phone size={12} className="inline mr-1" />
-                  Phone Number
-                </label>
-                <input
-                  type="tel"
-                  className="form-input"
-                  placeholder="+1 234 567 8900"
-                  {...methods.register("phone")}
-                />
-              </div>
+                <Divider />
 
-              <hr className="divider" />
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="form-group">
-                  <label className="form-label">Department</label>
-                  <input
-                    className="form-input"
-                    value={profile?.department ?? ""}
-                    disabled
-                    readOnly
-                  />
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <FormField label="Department">
+                    <Input value={profile?.department ?? ""} disabled readOnly />
+                  </FormField>
+                  <FormField label="Job Role">
+                    <Input value={profile?.role ?? ""} disabled readOnly />
+                  </FormField>
                 </div>
-                <div className="form-group">
-                  <label className="form-label">Job Role</label>
-                  <input
-                    className="form-input"
-                    value={profile?.role ?? ""}
-                    disabled
-                    readOnly
-                  />
-                </div>
-              </div>
 
-              <p className="form-hint mb-5">
-                Department and role can only be changed by your manager.
-              </p>
+                <Typography variant="caption" color="muted" className="mb-5">
+                  Department and role can only be changed by your manager.
+                </Typography>
 
-              <button
-                type="submit"
-                className="btn btn-primary w-auto"
-                disabled={isSaving || !isDirty}
-              >
-                {isSaving ? (
-                  <>
-                    <span className="spinner" /> Saving...
-                  </>
-                ) : (
-                  <>
-                    <Save size={16} /> Save Changes
-                  </>
-                )}
-              </button>
-            </form>
-          </FormProvider>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  className="w-auto"
+                  disabled={!isDirty}
+                  loading={isSaving}
+                  loadingText="Saving..."
+                >
+                  <Save size={16} /> Save Changes
+                </Button>
+              </form>
+            </FormProvider>
+          </Card>
         </motion.div>
       </div>
     </div>

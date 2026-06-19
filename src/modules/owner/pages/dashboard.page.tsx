@@ -1,8 +1,19 @@
 "use client";
 import { motion } from "framer-motion";
 import { Users, CheckSquare, Clock, TrendingUp } from "lucide-react";
+import Link from "next/link";
 import { useQueryEmployees, useQueryAllTasks } from "@/shared/hooks";
-import { DashboardSkeleton, Badge } from "@/shared/components";
+import {
+  Avatar,
+  Badge,
+  Card,
+  CardHeader,
+  CardTitle,
+  DashboardSkeleton,
+  EmptyState,
+  PageHeader,
+  Typography,
+} from "@/shared/components";
 import { StatCard } from "../components";
 import { formatEnumToLabel } from "@/shared/utils";
 
@@ -26,21 +37,21 @@ export function DashboardPage() {
       icon: Users,
       label: "Total Employees",
       value: stats.totalEmployees,
-      colorClass: "stat-icon-purple",
+      colorClass: "purple" as const,
     },
     {
       icon: CheckSquare,
       label: "Total Tasks",
       value: stats.totalTasks,
-      colorClass: "stat-icon-blue",
+      colorClass: "blue" as const,
     },
     {
       icon: Clock,
       label: "Pending Tasks",
       value: stats.pendingTasks,
-      colorClass: "stat-icon-yellow",
+      colorClass: "yellow" as const,
     },
-    { icon: TrendingUp, label: "Completed", value: stats.doneTasks, colorClass: "stat-icon-green" },
+    { icon: TrendingUp, label: "Completed", value: stats.doneTasks, colorClass: "green" as const },
   ];
 
   const recentTasks = tasks.slice(0, 5);
@@ -52,15 +63,10 @@ export function DashboardPage() {
 
   return (
     <div>
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">Dashboard</h1>
-          <p className="page-subtitle">Welcome back! Here&apos;s what&apos;s happening today.</p>
-        </div>
-      </div>
+      <PageHeader title="Dashboard" subtitle="Welcome back! Here's what's happening today." />
 
       <motion.div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
+        className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
         initial="hidden"
         animate="visible"
         variants={{ visible: { transition: { staggerChildren: 0.07 } } }}
@@ -70,83 +76,86 @@ export function DashboardPage() {
         ))}
       </motion.div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="card">
-          <div className="card-header">
-            <span className="card-title">Recent Tasks</span>
-            <a href="/tasks" className="text-[13px] text-[var(--accent-primary)]">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Tasks</CardTitle>
+            <Link href="/tasks" className="text-brand-primary-light text-[13px] hover:text-white">
               View all →
-            </a>
-          </div>
+            </Link>
+          </CardHeader>
           {recentTasks.length === 0 ? (
-            <div className="empty-state !py-8">
-              <div className="empty-state-icon">📋</div>
-              <p className="empty-state-title">No tasks yet</p>
-              <p className="empty-state-desc">Create your first task for an employee</p>
-            </div>
+            <EmptyState
+              icon="📋"
+              title="No tasks yet"
+              description="Create your first task for an employee"
+              className="py-8!"
+            />
           ) : (
             <div className="flex flex-col gap-3">
               {recentTasks.map((task) => (
                 <div
                   key={task.id}
-                  className="flex items-center gap-3 py-2.5 border-b border-[var(--border-subtle)]"
+                  className="border-brand-primary flex items-center gap-3 border-b py-2.5"
                 >
-                  <div className="flex-1 min-w-0">
-                    <p
-                      className="text-sm font-medium text-[var(--text-primary)] truncate"
-                    >
+                  <div className="min-w-0 flex-1">
+                    <Typography variant="small" color="primary" className="truncate font-medium">
                       {task.title}
-                    </p>
-                    <p className="text-xs text-[var(--text-muted)]">
+                    </Typography>
+                    <Typography variant="caption" color="muted">
                       {task.assignedToName}
-                    </p>
+                    </Typography>
                   </div>
                   <Badge variant={task.status === "done" ? "success" : "warning"}>
                     {formatEnumToLabel(task.status)}
                   </Badge>
-
                 </div>
               ))}
             </div>
           )}
-        </div>
+        </Card>
 
-        <div className="card">
-          <div className="card-header">
-            <span className="card-title">Recent Employees</span>
-            <a href="/employees" className="text-[13px] text-[var(--accent-primary)]">
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Employees</CardTitle>
+            <Link
+              href="/employees"
+              className="text-brand-primary-light text-[13px] hover:text-white"
+            >
               View all →
-            </a>
-          </div>
+            </Link>
+          </CardHeader>
           {recentEmployees.length === 0 ? (
-            <div className="empty-state !py-8">
-              <div className="empty-state-icon">👥</div>
-              <p className="empty-state-title">No employees yet</p>
-              <p className="empty-state-desc">Add your first team member</p>
-            </div>
+            <EmptyState
+              icon="👥"
+              title="No employees yet"
+              description="Add your first team member"
+              className="py-8!"
+            />
           ) : (
             <div className="flex flex-col gap-1">
               {recentEmployees.map((emp) => (
                 <div
                   key={emp.id}
-                  className="flex items-center gap-3 py-2.5 border-b border-[var(--border-subtle)]"
+                  className="border-brand-primary flex items-center gap-3 border-b py-2.5"
                 >
-                  <div className="avatar avatar-sm">{emp.name[0].toUpperCase()}</div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[var(--text-primary)]">
+                  <Avatar size="sm">{emp.name[0].toUpperCase()}</Avatar>
+                  <div className="min-w-0 flex-1">
+                    <Typography variant="small" color="primary" className="font-medium">
                       {emp.name}
-                    </p>
-                    <p className="text-xs text-[var(--text-muted)]">{emp.department}</p>
+                    </Typography>
+                    <Typography variant="caption" color="muted">
+                      {emp.department}
+                    </Typography>
                   </div>
                   <Badge variant={emp.isSetup ? "success" : "warning"}>
                     {emp.isSetup ? "Active" : "Pending"}
                   </Badge>
-
                 </div>
               ))}
             </div>
           )}
-        </div>
+        </Card>
       </div>
     </div>
   );

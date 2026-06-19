@@ -3,6 +3,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FormProvider } from "react-hook-form";
 import { useEmployeeLogin } from "../hooks";
 import { OtpInput } from "../components";
+import {
+  Alert,
+  AuthCard,
+  AuthHeading,
+  AuthLogo,
+  AuthPage,
+  Button,
+  DividerText,
+  FormField,
+  Input,
+  Typography,
+} from "@/shared/components";
 
 export function EmployeeLoginPage() {
   const {
@@ -23,150 +35,132 @@ export function EmployeeLoginPage() {
   } = useEmployeeLogin();
 
   return (
-    <div className="auth-page">
-      <div
-        className="auth-bg-orb auth-bg-orb-1 !bg-[rgba(139,92,246,0.12)]"
-      />
-      <div
-        className="auth-bg-orb auth-bg-orb-2 !bg-[rgba(99,102,241,0.08)]"
-      />
-
+    <AuthPage>
       <motion.div
-        className="auth-card"
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <div className="auth-logo">
-          <div className="auth-logo-icon">⚡</div>
-          <span className="auth-logo-text">Skipli</span>
-        </div>
+        <AuthCard>
+          <AuthLogo />
 
-        <AnimatePresence mode="wait">
-          {step === "email" ? (
-            <motion.div
-              key="email"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              transition={{ duration: 0.25 }}
-            >
-              <h1 className="auth-title">Employee Login</h1>
-              <p className="auth-subtitle">
-                Enter your work email to receive an access code
-              </p>
+          <AnimatePresence mode="wait">
+            {step === "email" ? (
+              <motion.div
+                key="email"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.25 }}
+              >
+                <AuthHeading
+                  title="Employee Login"
+                  subtitle="Enter your work email to receive an access code"
+                />
 
-              <FormProvider {...emailMethods}>
-                <form onSubmit={handleSendOtp}>
-                  {error && <div className="alert alert-error">{error}</div>}
-                  <div className="form-group">
-                    <label className="form-label">Work Email</label>
-                    <input
-                      type="email"
-                      className="form-input"
-                      placeholder="you@company.com"
-                      autoFocus
-                      {...emailMethods.register("email")}
+                <FormProvider {...emailMethods}>
+                  <form onSubmit={handleSendOtp}>
+                    {error && <Alert>{error}</Alert>}
+                    <FormField
+                      label="Work Email"
+                      error={emailMethods.formState.errors.email?.message}
+                    >
+                      <Input
+                        type="email"
+                        placeholder="you@company.com"
+                        autoFocus
+                        {...emailMethods.register("email")}
+                      />
+                    </FormField>
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      size="lg"
+                      loading={loading}
+                      loadingText="Sending..."
+                    >
+                      Send Access Code →
+                    </Button>
+                  </form>
+                </FormProvider>
+
+                <DividerText className="mt-6">Manager?</DividerText>
+                <Button href="/login" variant="ghost" className="mt-2 w-full text-center">
+                  Login as Manager
+                </Button>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="otp"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.25 }}
+              >
+                <Button
+                  variant="custom"
+                  onClick={goBack}
+                  className="mb-4 flex cursor-pointer items-center gap-1.5 border-none bg-transparent text-[13px] text-brand-primary-light"
+                >
+                  ← Back
+                </Button>
+                <AuthHeading
+                  title="Check Your Email"
+                  subtitle={
+                    <>
+                      We sent a code to{" "}
+                      <Typography as="strong" variant="small" color="primary">
+                        {email}
+                      </Typography>
+                    </>
+                  }
+                />
+
+                <form onSubmit={handleValidateOtp}>
+                  {error && <Alert>{error}</Alert>}
+                  <FormField>
+                    <OtpInput
+                      otp={otp}
+                      onChange={handleOtpChange}
+                      onKeyDown={handleOtpKeyDown}
+                      onPaste={handleOtpPaste}
+                      inputRefs={otpRefs}
                     />
-                    {emailMethods.formState.errors.email && (
-                      <p className="form-hint !text-[var(--danger)]">
-                        {emailMethods.formState.errors.email.message}
-                      </p>
+                  </FormField>
+
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="lg"
+                    loading={loading}
+                    loadingText="Verifying..."
+                  >
+                    Login →
+                  </Button>
+
+                  <div className="mt-5 text-center">
+                    {countdown > 0 ? (
+                      <Typography variant="small" color="muted">
+                        Resend in {countdown}s
+                      </Typography>
+                    ) : (
+                      <Button
+                        type="button"
+                        onClick={handleSendOtp}
+                        loading={loading}
+                        variant="custom"
+                        className="cursor-pointer border-none bg-transparent text-[13px] text-brand-primary-light"
+                      >
+                        Resend Code
+                      </Button>
                     )}
                   </div>
-                  <button
-                    type="submit"
-                    className="btn btn-primary btn-lg"
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <>
-                        <span className="spinner" /> Sending...
-                      </>
-                    ) : (
-                      "Send Access Code →"
-                    )}
-                  </button>
                 </form>
-              </FormProvider>
-
-              <div className="divider-text mt-6">
-                <span>Manager?</span>
-              </div>
-              <a
-                href="/login"
-                className="btn btn-ghost w-full mt-2 text-center"
-              >
-                Login as Manager
-              </a>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="otp"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.25 }}
-            >
-              <button
-                onClick={goBack}
-                className="bg-none border-none cursor-pointer text-[var(--text-secondary)] text-[13px] mb-4 flex items-center gap-1.5"
-              >
-                ← Back
-              </button>
-              <h1 className="auth-title">Check Your Email</h1>
-              <p className="auth-subtitle">
-                We sent a code to{" "}
-                <strong className="text-[var(--text-primary)]">{email}</strong>
-              </p>
-
-              <form onSubmit={handleValidateOtp}>
-                {error && <div className="alert alert-error">{error}</div>}
-                <div className="form-group">
-                  <OtpInput
-                    otp={otp}
-                    onChange={handleOtpChange}
-                    onKeyDown={handleOtpKeyDown}
-                    onPaste={handleOtpPaste}
-                    inputRefs={otpRefs}
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="btn btn-primary btn-lg"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <span className="spinner" /> Verifying...
-                    </>
-                  ) : (
-                    "Login →"
-                  )}
-                </button>
-
-                <div className="text-center mt-5">
-                  {countdown > 0 ? (
-                    <span className="text-[13px] text-[var(--text-muted)]">
-                      Resend in {countdown}s
-                    </span>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={handleSendOtp}
-                      disabled={loading}
-                      className="bg-none border-none cursor-pointer text-[var(--accent-primary)] text-[13px]"
-                    >
-                      Resend Code
-                    </button>
-                  )}
-                </div>
-              </form>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </AuthCard>
       </motion.div>
-    </div>
+    </AuthPage>
   );
 }

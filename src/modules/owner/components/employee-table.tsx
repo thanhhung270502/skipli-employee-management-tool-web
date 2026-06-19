@@ -1,9 +1,8 @@
 "use client";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Edit2, Trash2 } from "lucide-react";
 import type { EmployeeObject } from "@/common/models/employee";
-import { Badge } from "@/shared/components";
-
+import { Avatar, Badge, Button, Typography } from "@/shared/components";
 
 interface EmployeeTableProps {
   employees: EmployeeObject[];
@@ -13,71 +12,88 @@ interface EmployeeTableProps {
 
 export function EmployeeTable({ employees, onEdit, onDelete }: EmployeeTableProps) {
   return (
-    <div className="table-container">
-      <table className="table">
+    <div className="overflow-hidden rounded-2xl border border-brand-primary bg-brand-primary-dark">
+      <table className="w-full border-collapse">
         <thead>
           <tr>
-            <th>Employee</th>
-            <th>Department</th>
-            <th>Role</th>
-            <th>Contact</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th className="border-b border-brand-primary bg-white/2 px-5 py-3.5 text-left text-[11px] font-bold tracking-wider text-brand-primary-light uppercase">
+              Employee
+            </th>
+            <th className="border-b border-brand-primary bg-white/2 px-5 py-3.5 text-left text-[11px] font-bold tracking-wider text-brand-primary-light uppercase">
+              Department
+            </th>
+            <th className="border-b border-brand-primary bg-white/2 px-5 py-3.5 text-left text-[11px] font-bold tracking-wider text-brand-primary-light uppercase">
+              Role
+            </th>
+            <th className="border-b border-brand-primary bg-white/2 px-5 py-3.5 text-left text-[11px] font-bold tracking-wider text-brand-primary-light uppercase">
+              Contact
+            </th>
+            <th className="border-b border-brand-primary bg-white/2 px-5 py-3.5 text-left text-[11px] font-bold tracking-wider text-brand-primary-light uppercase">
+              Status
+            </th>
+            <th className="border-b border-brand-primary bg-white/2 px-5 py-3.5 text-left text-[11px] font-bold tracking-wider text-brand-primary-light uppercase">
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody>
           {employees.map((emp) => (
             <motion.tr
               key={emp.id}
+              className="transition-colors hover:bg-brand-primary/5"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.2 }}
             >
-              <td>
+              <td className="border-b border-brand-primary px-5 py-4 align-middle text-sm text-white last:border-b-0">
                 <div className="flex items-center gap-3">
-                  <div className="avatar avatar-sm">
-                    {emp.name[0].toUpperCase()}
-                  </div>
+                  <Avatar size="sm">{emp.name[0].toUpperCase()}</Avatar>
                   <div>
-                    <p className="font-semibold">{emp.name}</p>
-                    <p className="text-xs text-[var(--text-muted)]">
+                    <Typography variant="small" color="primary" className="font-semibold">
+                      {emp.name}
+                    </Typography>
+                    <Typography variant="caption" color="muted">
                       {emp.email}
-                    </p>
+                    </Typography>
                   </div>
                 </div>
               </td>
-              <td>{emp.department}</td>
-              <td>
+              <td className="border-b border-brand-primary px-5 py-4 align-middle text-sm text-white">
+                {emp.department}
+              </td>
+              <td className="border-b border-brand-primary px-5 py-4 align-middle text-sm text-white">
                 <Badge variant="purple">{emp.role}</Badge>
-
               </td>
-              <td>
-                <p className="text-[13px] text-[var(--text-secondary)]">
+              <td className="border-b border-brand-primary px-5 py-4 align-middle text-sm text-white">
+                <Typography variant="small" color="muted">
                   {emp.phone ?? "—"}
-                </p>
+                </Typography>
               </td>
-              <td>
+              <td className="border-b border-brand-primary px-5 py-4 align-middle text-sm text-white">
                 <Badge variant={emp.isSetup ? "success" : "warning"}>
                   {emp.isSetup ? "✓ Active" : "⏳ Pending"}
                 </Badge>
-
               </td>
-              <td>
+              <td className="border-b border-brand-primary px-5 py-4 align-middle text-sm text-white">
                 <div className="flex gap-1.5">
-                  <button
-                    className="btn btn-ghost btn-sm btn-icon"
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    iconOnly
                     onClick={() => onEdit(emp)}
                     title="Edit"
                   >
                     <Edit2 size={14} />
-                  </button>
-                  <button
-                    className="btn btn-danger btn-sm btn-icon"
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    iconOnly
                     onClick={() => onDelete(emp.id)}
                     title="Delete"
                   >
                     <Trash2 size={14} />
-                  </button>
+                  </Button>
                 </div>
               </td>
             </motion.tr>

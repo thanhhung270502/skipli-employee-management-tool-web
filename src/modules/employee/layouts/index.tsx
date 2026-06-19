@@ -2,13 +2,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getUser, isEmployee } from "@/common/lib";
+import { AppLayout, PageLoading } from "@/shared/components";
 import { Sidebar } from "@/modules/owner/components";
 
-export function EmployeePortalLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function EmployeeLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [ready, setReady] = useState(false);
 
@@ -22,17 +19,10 @@ export function EmployeePortalLayout({
   }, [router]);
 
   if (!ready) {
-    return (
-      <div className="page-loading">
-        <div className="spinner spinner-primary" />
-      </div>
-    );
+    return <PageLoading className="min-h-screen" />;
   }
 
-  return (
-    <div className="app-layout">
-      <Sidebar role="employee" />
-      <main className="main-content">{children}</main>
-    </div>
-  );
+  return <AppLayout sidebar={<Sidebar role="employee" />}>{children}</AppLayout>;
 }
+
+export { EmployeeLayout as EmployeePortalLayout };

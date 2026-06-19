@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getUser, isOwner } from "@/common/lib";
+import { AppLayout, PageLoading } from "@/shared/components";
 import { Sidebar } from "../components";
 
 export function OwnerLayout({ children }: { children: React.ReactNode }) {
@@ -18,17 +19,8 @@ export function OwnerLayout({ children }: { children: React.ReactNode }) {
   }, [router]);
 
   if (!ready) {
-    return (
-      <div className="page-loading">
-        <div className="spinner spinner-primary" />
-      </div>
-    );
+    return <PageLoading className="min-h-screen" />;
   }
 
-  return (
-    <div className="app-layout">
-      <Sidebar role="owner" />
-      <main className="main-content">{children}</main>
-    </div>
-  );
+  return <AppLayout sidebar={<Sidebar role="owner" />}>{children}</AppLayout>;
 }
