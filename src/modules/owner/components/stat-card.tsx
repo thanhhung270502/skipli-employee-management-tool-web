@@ -7,10 +7,10 @@ import { cn } from "@/shared/utils";
 export type StatIconColor = "purple" | "green" | "yellow" | "blue";
 
 const iconColorClasses: Record<StatIconColor, string> = {
-  purple: "bg-brand-primary/30 text-brand-primary-light",
-  green: "bg-success/10 text-success",
-  yellow: "bg-warning/10 text-warning",
-  blue: "bg-blue/10 text-blue",
+  purple: "bg-purple-25/10 text-brand-primary-light",
+  green: "bg-success-25/10 text-success",
+  yellow: "bg-warning-25/10 text-warning",
+  blue: "bg-blue-25/10 text-info-alt",
 };
 
 interface StatCardProps {
@@ -23,7 +23,7 @@ interface StatCardProps {
 export function StatCard({ icon: Icon, label, value, colorClass }: StatCardProps) {
   return (
     <motion.div
-      className="flex items-center gap-4 rounded-2xl border border-brand-primary bg-brand-primary-dark p-6 transition-all hover:-translate-y-0.5 hover:border-brand-primary-light/30 hover:shadow-lg"
+      className="border-brand-primary bg-brand-primary-dark hover:border-brand-primary-light/30 flex items-center gap-4 rounded-2xl border p-6 transition-all hover:-translate-y-0.5 hover:shadow-lg"
       variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}
     >
       <div

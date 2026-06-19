@@ -1,13 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import { cn } from "@/shared/utils";
 
-export type BadgeVariant =
-  | "success"
-  | "warning"
-  | "danger"
-  | "info"
-  | "purple"
-  | "neutral";
+export type BadgeVariant = "success" | "warning" | "danger" | "info" | "purple" | "neutral";
 
 export interface BadgeProps {
   variant?: BadgeVariant;
@@ -17,20 +11,15 @@ export interface BadgeProps {
 }
 
 const variantClasses: Record<BadgeVariant, string> = {
-  success: "bg-success/10 text-success",
-  warning: "bg-warning/10 text-warning",
-  danger: "bg-error/10 text-error",
-  info: "bg-blue/10 text-blue",
-  purple: "bg-brand-primary/30 text-brand-primary-light",
-  neutral: "bg-white/5 text-brand-primary-light",
+  success: "bg-success-25/10 text-success",
+  warning: "bg-warning-25/10 text-warning",
+  danger: "bg-error-25/10 text-error",
+  info: "bg-blue-25/10 text-info",
+  purple: "bg-purple-25/10 text-purple",
+  neutral: "bg-neutral-25/10 text-neutral",
 };
 
-export function Badge({
-  variant = "neutral",
-  className = "",
-  style,
-  children,
-}: BadgeProps) {
+export function Badge({ variant = "neutral", className = "", style, children }: BadgeProps) {
   return (
     <span
       className={cn(

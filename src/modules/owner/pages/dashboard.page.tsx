@@ -15,7 +15,7 @@ import {
   Typography,
 } from "@/shared/components";
 import { StatCard } from "../components";
-import { formatEnumToLabel } from "@/shared/utils";
+import { cn, formatEnumToLabel } from "@/shared/utils";
 
 export function DashboardPage() {
   const { data: empData, isLoading: empLoading } = useQueryEmployees();
@@ -77,8 +77,8 @@ export function DashboardPage() {
       </motion.div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Card>
-          <CardHeader>
+        <Card className="p-0">
+          <CardHeader className="border-brand-primary mb-0 border-b px-6 py-4">
             <CardTitle>Recent Tasks</CardTitle>
             <Link href="/tasks" className="text-brand-primary-light text-[13px] hover:text-white">
               View all →
@@ -92,11 +92,14 @@ export function DashboardPage() {
               className="py-8!"
             />
           ) : (
-            <div className="flex flex-col gap-3">
-              {recentTasks.map((task) => (
+            <div className="flex flex-col px-6">
+              {recentTasks.map((task, index) => (
                 <div
                   key={task.id}
-                  className="border-brand-primary flex items-center gap-3 border-b py-2.5"
+                  className={cn(
+                    "border-brand-primary flex items-center gap-3 border-b py-2.5",
+                    index === recentTasks.length - 1 && "border-b-0"
+                  )}
                 >
                   <div className="min-w-0 flex-1">
                     <Typography variant="small" color="primary" className="truncate font-medium">
