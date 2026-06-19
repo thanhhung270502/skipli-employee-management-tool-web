@@ -1,42 +1,58 @@
 "use client";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Calendar } from "lucide-react";
+import { Calendar, Edit2, Trash2 } from "lucide-react";
+import toast from "react-hot-toast";
 import type { TaskObject } from "@/common/models/task";
+import { useDeleteTaskMutation } from "@/shared/hooks";
+import { getTimestamp } from "@/shared/utils";
 
 interface TaskCardProps {
   task: TaskObject;
   index: number;
+  onEdit?: () => void;
 }
+export function TaskCard({ task, index, onEdit }: TaskCardProps) {
+  const dueDate = getTimestamp(task.dueDate);
+  const deleteMutation = useDeleteTaskMutation();
+  const [isDeleting, setIsDeleting] = useState(false);
 
-const getTimestamp = (ts: unknown): Date | null => {
-  if (!ts) return null;
-  if (ts instanceof Date) {
-    return isNaN(ts.getTime()) ? null : ts;
-  }
-  if (typeof ts === "object") {
-    const t = ts as { _seconds?: number; seconds?: number; toDate?: () => Date };
-    if (typeof t.toDate === "function") {
+  const handleDelete = async () => {
+    if (confirm(`Are you sure you want to delete task "${task.title}"?`)) {
+      setIsDeleting(true);
       try {
-        const d = t.toDate();
-        return isNaN(d.getTime()) ? null : d;
-      } catch {
-        // ignore
+        await deleteMutation.mutateAsync(task.id);
+        toast.success("Task deleted successfully! 🗑️");
+      } catch (err: unknown) {
+        const e = err as { response?: { data?: { message?: string } } };
+        toast.error(e.response?.data?.message ?? "Failed to delete task");
+      } finally {
+        setIsDeleting(false);
       }
     }
-    const secs = t._seconds ?? t.seconds;
-    if (typeof secs === "number") {
-      return new Date(secs * 1000);
-    }
-  }
-  if (typeof ts === "string" || typeof ts === "number") {
-    const d = new Date(ts);
-    return isNaN(d.getTime()) ? null : d;
-  }
-  return null;
-};
+  };
 
-export function TaskCard({ task, index }: TaskCardProps) {
-  const dueDate = getTimestamp(task.dueDate);
+  const getStatusColor = () => {
+    switch (task.status) {
+      case "done":
+        return "var(--success)";
+      case "in_progress":
+        return "var(--info)";
+      default:
+        return "var(--warning)";
+    }
+  };
+
+  const getStatusShadow = () => {
+    switch (task.status) {
+      case "done":
+        return "0 0 8px rgba(16,185,129,0.4)";
+      case "in_progress":
+        return "0 0 8px rgba(59,130,246,0.4)";
+      default:
+        return "0 0 8px rgba(245,158,11,0.4)";
+    }
+  };
 
   return (
     <motion.div
@@ -53,12 +69,8 @@ export function TaskCard({ task, index }: TaskCardProps) {
           borderRadius: "50%",
           flexShrink: 0,
           marginTop: 4,
-          background:
-            task.status === "done" ? "var(--success)" : "var(--warning)",
-          boxShadow:
-            task.status === "done"
-              ? "0 0 8px rgba(16,185,129,0.4)"
-              : "0 0 8px rgba(245,158,11,0.4)",
+          background: getStatusColor(),
+          boxShadow: getStatusShadow(),
         }}
       />
       <div style={{ flex: 1, minWidth: 0 }}>
@@ -75,10 +87,27 @@ export function TaskCard({ task, index }: TaskCardProps) {
           </h3>
           <span
             className={`badge ${
-              task.status === "done" ? "badge-success" : "badge-warning"
+              task.status === "done"
+                ? "badge-success"
+                : task.status === "in_progress"
+                ? "badge-info"
+                : "badge-warning"
             }`}
+            style={{ textTransform: "capitalize" }}
           >
-            {task.status}
+            {task.status === "in_progress" ? "In Progress" : task.status}
+          </span>
+          <span
+            className={`badge ${
+              task.priority === "high"
+                ? "badge-danger"
+                : task.priority === "medium"
+                ? "badge-purple"
+                : "badge-neutral"
+            }`}
+            style={{ textTransform: "capitalize" }}
+          >
+            {task.priority || "medium"}
           </span>
         </div>
         {task.description && (
@@ -127,6 +156,30 @@ export function TaskCard({ task, index }: TaskCardProps) {
           )}
         </div>
       </div>
+      <div style={{ display: "flex", gap: 8, marginLeft: "auto", flexShrink: 0 }}>
+        <button
+          className="btn btn-icon btn-ghost"
+          onClick={onEdit}
+          title="Edit Task"
+          style={{ width: 32, height: 32 }}
+        >
+          <Edit2 size={13} />
+        </button>
+        <button
+          className="btn btn-icon btn-danger"
+          onClick={handleDelete}
+          disabled={isDeleting}
+          title="Delete Task"
+          style={{ width: 32, height: 32 }}
+        >
+          {isDeleting ? (
+            <span className="spinner" style={{ width: 12, height: 12, borderWidth: 2 }} />
+          ) : (
+            <Trash2 size={13} />
+          )}
+        </button>
+      </div>
     </motion.div>
   );
 }
+

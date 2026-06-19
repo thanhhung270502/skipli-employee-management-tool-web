@@ -3,8 +3,12 @@ import { APIMethod, APIBaseRoutes } from "@/common/types";
 import type {
   CreateTaskRequest,
   CreateTaskResponse,
+  UpdateTaskRequest,
+  UpdateTaskResponse,
+  DeleteTaskResponse,
   GetAllTasksResponse,
   GetMyTasksResponse,
+  MarkTaskInProgressResponse,
   MarkTaskDoneResponse,
 } from "./task-model";
 
@@ -29,6 +33,30 @@ export const API_CREATE_TASK: APIDefinition<
   buildUrlPath: () => `${APIBaseRoutes.OWNER}/tasks`,
 };
 
+export const API_UPDATE_TASK: APIDefinition<
+  UpdateTaskRequest,
+  UpdateTaskResponse
+> = {
+  method: APIMethod.PUT,
+  baseUrl: APIBaseRoutes.OWNER,
+  subUrl: "/tasks/:taskId",
+  requestBody: {} as UpdateTaskRequest,
+  responseBody: {} as UpdateTaskResponse,
+  buildUrlPath: (id: string) => `${APIBaseRoutes.OWNER}/tasks/${id}`,
+};
+
+export const API_DELETE_TASK: APIDefinition<
+  undefined,
+  DeleteTaskResponse
+> = {
+  method: APIMethod.DELETE,
+  baseUrl: APIBaseRoutes.OWNER,
+  subUrl: "/tasks/:taskId",
+  requestBody: undefined,
+  responseBody: {} as DeleteTaskResponse,
+  buildUrlPath: (id: string) => `${APIBaseRoutes.OWNER}/tasks/${id}`,
+};
+
 export const API_GET_MY_TASKS: APIDefinition<undefined, GetMyTasksResponse> = {
   method: APIMethod.GET,
   baseUrl: APIBaseRoutes.EMPLOYEE,
@@ -36,6 +64,18 @@ export const API_GET_MY_TASKS: APIDefinition<undefined, GetMyTasksResponse> = {
   requestBody: undefined,
   responseBody: {} as GetMyTasksResponse,
   buildUrlPath: () => `${APIBaseRoutes.EMPLOYEE}/tasks`,
+};
+
+export const API_MARK_TASK_IN_PROGRESS: APIDefinition<
+  undefined,
+  MarkTaskInProgressResponse
+> = {
+  method: APIMethod.PUT,
+  baseUrl: APIBaseRoutes.EMPLOYEE,
+  subUrl: "/tasks/:taskId/in-progress",
+  requestBody: undefined,
+  responseBody: {} as MarkTaskInProgressResponse,
+  buildUrlPath: (id: string) => `${APIBaseRoutes.EMPLOYEE}/tasks/${id}/in-progress`,
 };
 
 export const API_MARK_TASK_DONE: APIDefinition<
@@ -49,3 +89,4 @@ export const API_MARK_TASK_DONE: APIDefinition<
   responseBody: {} as MarkTaskDoneResponse,
   buildUrlPath: (id: string) => `${APIBaseRoutes.EMPLOYEE}/tasks/${id}/done`,
 };
+

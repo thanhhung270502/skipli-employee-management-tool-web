@@ -7,7 +7,8 @@ import type { TaskObject } from "@/common/models/task";
 interface EmployeeTaskCardProps {
   task: TaskObject;
   index: number;
-  isCompleting: boolean;
+  isUpdating: boolean;
+  onStartTask: (id: string) => void;
   onMarkDone: (id: string) => void;
 }
 
@@ -38,7 +39,13 @@ const getDate = (ts: unknown): Date | null => {
   return null;
 };
 
-export function EmployeeTaskCard({ task, index, isCompleting, onMarkDone }: EmployeeTaskCardProps) {
+export function EmployeeTaskCard({
+  task,
+  index,
+  isUpdating,
+  onStartTask,
+  onMarkDone,
+}: EmployeeTaskCardProps) {
   const dueDate = getDate(task.dueDate);
   const completedAt = getDate(task.completedAt);
 
@@ -67,17 +74,30 @@ export function EmployeeTaskCard({ task, index, isCompleting, onMarkDone }: Empl
           <CheckCircle size={12} style={{ color: "white" }} />
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <h3
-            style={{
-              fontSize: 15,
-              fontWeight: 600,
-              color: "var(--text-secondary)",
-              textDecoration: "line-through",
-              marginBottom: 4,
-            }}
-          >
-            {task.title}
-          </h3>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 4 }}>
+            <h3
+              style={{
+                fontSize: 15,
+                fontWeight: 600,
+                color: "var(--text-secondary)",
+                textDecoration: "line-through",
+              }}
+            >
+              {task.title}
+            </h3>
+            <span
+              className={`badge ${
+                task.priority === "high"
+                  ? "badge-danger"
+                  : task.priority === "medium"
+                  ? "badge-purple"
+                  : "badge-neutral"
+              }`}
+              style={{ textTransform: "capitalize", opacity: 0.7 }}
+            >
+              {task.priority || "medium"}
+            </span>
+          </div>
           {completedAt && (
             <span style={{ fontSize: 12, color: "var(--success)" }}>
               ✓ Completed {format(completedAt, "MMM d, yyyy")}
@@ -88,6 +108,8 @@ export function EmployeeTaskCard({ task, index, isCompleting, onMarkDone }: Empl
       </motion.div>
     );
   }
+
+  const isInProgress = task.status === "in_progress";
 
   return (
     <motion.div
@@ -104,21 +126,38 @@ export function EmployeeTaskCard({ task, index, isCompleting, onMarkDone }: Empl
           borderRadius: "50%",
           flexShrink: 0,
           marginTop: 2,
-          border: "2px solid var(--warning)",
+          border: `2px solid ${isInProgress ? "var(--info)" : "var(--warning)"}`,
           background: "transparent",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-        <Clock size={10} style={{ color: "var(--warning)" }} />
+        <Clock size={10} style={{ color: isInProgress ? "var(--info)" : "var(--warning)" }} />
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <h3
-          style={{ fontSize: 15, fontWeight: 600, color: "var(--text-primary)", marginBottom: 4 }}
-        >
-          {task.title}
-        </h3>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 4 }}>
+          <h3
+            style={{ fontSize: 15, fontWeight: 600, color: "var(--text-primary)" }}
+          >
+            {task.title}
+          </h3>
+          <span
+            className={`badge ${
+              task.priority === "high"
+                ? "badge-danger"
+                : task.priority === "medium"
+                ? "badge-purple"
+                : "badge-neutral"
+            }`}
+            style={{ textTransform: "capitalize" }}
+          >
+            {task.priority || "medium"}
+          </span>
+          {isInProgress && (
+            <span className="badge badge-info">In Progress</span>
+          )}
+        </div>
         {task.description && (
           <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 8 }}>
             {task.description}
@@ -139,23 +178,44 @@ export function EmployeeTaskCard({ task, index, isCompleting, onMarkDone }: Empl
           </span>
         )}
       </div>
-      <button
-        className="btn btn-success btn-sm"
-        style={{ width: "auto", flexShrink: 0 }}
-        onClick={() => onMarkDone(task.id)}
-        disabled={isCompleting}
-      >
-        {isCompleting ? (
-          <>
-            <span className="spinner" style={{ width: 14, height: 14, borderWidth: 2 }} />
-            Marking...
-          </>
-        ) : (
-          <>
-            <CheckCircle size={14} /> Done
-          </>
-        )}
-      </button>
+      {isInProgress ? (
+        <button
+          className="btn btn-success btn-sm"
+          style={{ width: "auto", flexShrink: 0 }}
+          onClick={() => onMarkDone(task.id)}
+          disabled={isUpdating}
+        >
+          {isUpdating ? (
+            <>
+              <span className="spinner" style={{ width: 14, height: 14, borderWidth: 2 }} />
+              Updating...
+            </>
+          ) : (
+            <>
+              <CheckCircle size={14} /> Complete
+            </>
+          )}
+        </button>
+      ) : (
+        <button
+          className="btn btn-secondary btn-sm"
+          style={{ width: "auto", flexShrink: 0 }}
+          onClick={() => onStartTask(task.id)}
+          disabled={isUpdating}
+        >
+          {isUpdating ? (
+            <>
+              <span className="spinner" style={{ width: 14, height: 14, borderWidth: 2 }} />
+              Updating...
+            </>
+          ) : (
+            <>
+              Start Task
+            </>
+          )}
+        </button>
+      )}
     </motion.div>
   );
 }
+

@@ -2,38 +2,76 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import toast from "react-hot-toast";
-import { useQueryAllTasks, useQueryEmployees, useCreateTaskMutation } from "@/shared/hooks";
-import { TaskListSkeleton } from "@/shared/components";
+import {
+  useQueryAllTasks,
+  useQueryEmployees,
+  useCreateTaskMutation,
+  useUpdateTaskMutation,
+} from "@/shared/hooks";
+import { TaskListSkeleton, Skeleton } from "@/shared/components";
+import { formatToInputDate } from "@/shared/utils";
 import { useTaskForm } from "../hooks";
 import { TaskCard, TaskFormModal } from "../components";
+import type { TaskObject } from "@/common/models/task";
+
 
 export function TasksPage() {
   const { data: taskData, isLoading: tasksLoading } = useQueryAllTasks();
   const { data: empData } = useQueryEmployees();
   const createTaskMutation = useCreateTaskMutation();
+  const updateTaskMutation = useUpdateTaskMutation();
 
   const tasks = taskData?.tasks ?? [];
   const activeEmployees = (empData?.employees ?? []).filter((e) => e.isSetup);
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [filter, setFilter] = useState<"all" | "pending" | "done">("all");
+  const [editingTask, setEditingTask] = useState<TaskObject | null>(null);
+  const [filter, setFilter] = useState<"all" | "pending" | "in_progress" | "done">("all");
 
   const { methods, reset } = useTaskForm();
 
+  const handleEditClick = (task: TaskObject) => {
+    setEditingTask(task);
+    methods.reset({
+      title: task.title,
+      description: task.description || "",
+      assignedTo: task.assignedTo,
+      dueDate: formatToInputDate(task.dueDate),
+      priority: task.priority,
+    });
+    setModalOpen(true);
+  };
+
   const handleCreateTask = methods.handleSubmit(async (data) => {
     try {
-      await createTaskMutation.mutateAsync({
-        title: data.title,
-        description: data.description,
-        assignedTo: data.assignedTo,
-        dueDate: data.dueDate || undefined,
-      });
-      toast.success("Task created!");
+      if (editingTask) {
+        await updateTaskMutation.mutateAsync({
+          taskId: editingTask.id,
+          data: {
+            title: data.title,
+            description: data.description,
+            assignedTo: data.assignedTo,
+            dueDate: data.dueDate || null,
+            priority: data.priority,
+          },
+        });
+        toast.success("Task updated!");
+      } else {
+        await createTaskMutation.mutateAsync({
+          title: data.title,
+          description: data.description,
+          assignedTo: data.assignedTo,
+          dueDate: data.dueDate || undefined,
+          priority: data.priority,
+        });
+        toast.success("Task created!");
+      }
       setModalOpen(false);
+      setEditingTask(null);
       reset();
     } catch (err: unknown) {
       const e = err as { response?: { data?: { message?: string } } };
-      toast.error(e.response?.data?.message ?? "Failed to create task");
+      toast.error(e.response?.data?.message ?? "Failed to save task");
     }
   });
 
@@ -44,8 +82,8 @@ export function TasksPage() {
       <div>
         <div className="page-header">
           <div>
-            <div className="skeleton" style={{ width: 120, height: 32, marginBottom: 8 }} />
-            <div className="skeleton" style={{ width: 180, height: 16 }} />
+            <Skeleton width={120} height={32} style={{ marginBottom: 8 }} />
+            <Skeleton width={180} height={16} />
           </div>
         </div>
         <TaskListSkeleton count={5} />
@@ -64,7 +102,11 @@ export function TasksPage() {
         </div>
         <button
           className="btn btn-primary"
-          onClick={() => setModalOpen(true)}
+          onClick={() => {
+            setEditingTask(null);
+            reset();
+            setModalOpen(true);
+          }}
           style={{ width: "auto" }}
         >
           <Plus size={16} /> Create Task
@@ -72,20 +114,22 @@ export function TasksPage() {
       </div>
 
       {/* Filter Tabs */}
-      <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
-        {(["all", "pending", "done"] as const).map((f) => (
+      <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
+        {(["all", "pending", "in_progress", "done"] as const).map((f) => (
           <button
             key={f}
             className={`btn btn-sm ${filter === f ? "btn-secondary" : "btn-ghost"}`}
             onClick={() => setFilter(f)}
             style={{ width: "auto", textTransform: "capitalize" }}
           >
-            {f}{" "}
+            {f === "in_progress" ? "In Progress" : f}{" "}
             {f === "all"
               ? `(${tasks.length})`
               : f === "pending"
                 ? `(${tasks.filter((t) => t.status === "pending").length})`
-                : `(${tasks.filter((t) => t.status === "done").length})`}
+                : f === "in_progress"
+                  ? `(${tasks.filter((t) => t.status === "in_progress").length})`
+                  : `(${tasks.filter((t) => t.status === "done").length})`}
           </button>
         ))}
       </div>
@@ -93,11 +137,17 @@ export function TasksPage() {
       {filtered.length === 0 ? (
         <div className="empty-state">
           <div className="empty-state-icon">📋</div>
-          <p className="empty-state-title">No {filter !== "all" ? filter : ""} tasks</p>
+          <p className="empty-state-title">
+            No {filter !== "all" ? (filter === "in_progress" ? "in progress" : filter) : ""} tasks
+          </p>
           <p className="empty-state-desc">Create a task and assign it to an employee</p>
           <button
             className="btn btn-primary"
-            onClick={() => setModalOpen(true)}
+            onClick={() => {
+              setEditingTask(null);
+              reset();
+              setModalOpen(true);
+            }}
             style={{ width: "auto", marginTop: 16 }}
           >
             <Plus size={16} /> Create Task
@@ -106,7 +156,7 @@ export function TasksPage() {
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {filtered.map((task, i) => (
-            <TaskCard key={task.id} task={task} index={i} />
+            <TaskCard key={task.id} task={task} index={i} onEdit={() => handleEditClick(task)} />
           ))}
         </div>
       )}
@@ -118,10 +168,13 @@ export function TasksPage() {
         onSubmit={handleCreateTask}
         onClose={() => {
           setModalOpen(false);
+          setEditingTask(null);
           reset();
         }}
-        isSubmitting={createTaskMutation.isPending}
+        isSubmitting={createTaskMutation.isPending || updateTaskMutation.isPending}
+        isEdit={!!editingTask}
       />
     </div>
   );
 }
+

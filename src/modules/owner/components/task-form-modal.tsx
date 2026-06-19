@@ -13,6 +13,7 @@ interface TaskFormModalProps {
   onSubmit: (e: React.FormEvent) => void;
   onClose: () => void;
   isSubmitting: boolean;
+  isEdit?: boolean;
 }
 
 function TaskFormFields({ employees }: { employees: EmployeeObject[] }) {
@@ -83,6 +84,19 @@ function TaskFormFields({ employees }: { employees: EmployeeObject[] }) {
           />
         </div>
       </div>
+
+      <div className="form-group">
+        <label className="form-label">Priority</label>
+        <select
+          className="form-input"
+          style={{ cursor: "pointer" }}
+          {...register("priority")}
+        >
+          <option value="low">Low 🟢</option>
+          <option value="medium">Medium 🟡</option>
+          <option value="high">High 🔴</option>
+        </select>
+      </div>
     </>
   );
 }
@@ -94,6 +108,7 @@ export function TaskFormModal({
   onSubmit,
   onClose,
   isSubmitting,
+  isEdit = false,
 }: TaskFormModalProps) {
   return (
     <AnimatePresence>
@@ -114,7 +129,7 @@ export function TaskFormModal({
             exit={{ opacity: 0, y: 20 }}
           >
             <div className="modal-header">
-              <h2 className="modal-title">Create New Task</h2>
+              <h2 className="modal-title">{isEdit ? "Edit Task" : "Create New Task"}</h2>
               <button className="modal-close" onClick={onClose}>
                 <X size={16} />
               </button>
@@ -123,7 +138,7 @@ export function TaskFormModal({
             <FormProvider {...methods}>
               <form onSubmit={onSubmit}>
                 <TaskFormFields employees={employees} />
-                <div style={{ display: "flex", gap: 12, marginTop: 8 }}>
+                <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
                   <button
                     type="button"
                     className="btn btn-ghost"
@@ -140,10 +155,10 @@ export function TaskFormModal({
                   >
                     {isSubmitting ? (
                       <>
-                        <span className="spinner" /> Creating...
+                        <span className="spinner" /> {isEdit ? "Saving..." : "Creating..."}
                       </>
                     ) : (
-                      "Create Task"
+                      isEdit ? "Save Changes" : "Create Task"
                     )}
                   </button>
                 </div>
@@ -155,3 +170,4 @@ export function TaskFormModal({
     </AnimatePresence>
   );
 }
+

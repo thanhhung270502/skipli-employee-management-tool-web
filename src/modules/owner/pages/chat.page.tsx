@@ -9,6 +9,7 @@ import { API_GET_MESSAGES } from "@/common/models/chat";
 import type { MessageObject, GetMessagesResponse } from "@/common/models/chat";
 import type { EmployeeObject } from "@/common/models/employee";
 import { logger } from "@/shared/libs";
+import { getTimestamp } from "@/shared/utils";
 
 export function ChatPage() {
   const { data, isLoading } = useQueryEmployees();
@@ -119,33 +120,9 @@ export function ChatPage() {
     }
   };
 
-  const getTimestamp = (ts: unknown): string => {
-    if (!ts) return "";
-    let date: Date | null = null;
-    if (ts instanceof Date) {
-      date = isNaN(ts.getTime()) ? null : ts;
-    } else if (typeof ts === "object") {
-      const t = ts as { _seconds?: number; seconds?: number; toDate?: () => Date };
-      if (typeof t.toDate === "function") {
-        try {
-          const d = t.toDate();
-          if (!isNaN(d.getTime())) date = d;
-        } catch {
-          // ignore
-        }
-      }
-      if (!date) {
-        const secs = t._seconds ?? t.seconds;
-        if (typeof secs === "number") {
-          date = new Date(secs * 1000);
-        }
-      }
-    } else if (typeof ts === "string" || typeof ts === "number") {
-      const d = new Date(ts);
-      if (!isNaN(d.getTime())) date = d;
-    }
-
-    if (!date || isNaN(date.getTime())) return "";
+  const formatMessageTime = (ts: unknown): string => {
+    const date = getTimestamp(ts);
+    if (!date) return "";
     return format(date, "HH:mm");
   };
 
@@ -239,7 +216,7 @@ export function ChatPage() {
                         <div className={`chat-bubble ${isMine ? "sent" : "received"}`}>
                           {msg.text}
                         </div>
-                        <div className="chat-timestamp">{getTimestamp(msg.timestamp)}</div>
+                        <div className="chat-timestamp">{formatMessageTime(msg.timestamp)}</div>
                       </div>
                     </div>
                   );

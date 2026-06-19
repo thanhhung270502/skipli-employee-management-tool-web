@@ -1,6 +1,13 @@
 export enum ETaskStatus {
   PENDING = "pending",
+  IN_PROGRESS = "in_progress",
   DONE = "done",
+}
+
+export enum ETaskPriority {
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
 }
 
 export interface TaskObject {
@@ -10,8 +17,10 @@ export interface TaskObject {
   assignedTo: string;
   assignedToName: string;
   status: ETaskStatus;
+  priority: ETaskPriority;
   dueDate: string | null;
   createdAt: string;
+  startedAt: string | null;
   completedAt: string | null;
 }
 
@@ -20,10 +29,29 @@ export interface CreateTaskRequest {
   description?: string;
   assignedTo: string;
   dueDate?: string;
+  priority?: ETaskPriority;
 }
 export interface CreateTaskResponse {
   taskId: string;
   task: TaskObject;
+}
+
+export interface UpdateTaskRequest {
+  title?: string;
+  description?: string;
+  assignedTo?: string;
+  dueDate?: string | null;
+  priority?: ETaskPriority;
+  status?: ETaskStatus;
+}
+export interface UpdateTaskResponse {
+  success: boolean;
+  task: TaskObject;
+}
+
+export interface DeleteTaskResponse {
+  success: boolean;
+  message: string;
 }
 
 export interface GetAllTasksResponse {
@@ -34,6 +62,13 @@ export interface GetMyTasksResponse {
   tasks: TaskObject[];
 }
 
-export interface MarkTaskDoneResponse {
+export interface MarkTaskInProgressResponse {
+  success: boolean;
   message: string;
 }
+
+export interface MarkTaskDoneResponse {
+  success: boolean;
+  message: string;
+}
+

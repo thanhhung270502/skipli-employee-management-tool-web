@@ -1,29 +1,48 @@
 "use client";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { useQueryMyTasks, useMarkTaskDoneMutation } from "@/shared/hooks";
+import {
+  useQueryMyTasks,
+  useMarkTaskDoneMutation,
+  useMarkTaskInProgressMutation,
+} from "@/shared/hooks";
 import { TaskListSkeleton } from "@/shared/components";
 import { EmployeeTaskCard } from "../components";
 
 export function EmployeeTasksPage() {
   const { data, isLoading } = useQueryMyTasks();
   const markDoneMutation = useMarkTaskDoneMutation();
-  const [completing, setCompleting] = useState<string | null>(null);
+  const markInProgressMutation = useMarkTaskInProgressMutation();
+  const [updatingTaskId, setUpdatingTaskId] = useState<string | null>(null);
 
   const tasks = data?.tasks ?? [];
   const pending = tasks.filter((t) => t.status === "pending");
+  const inProgress = tasks.filter((t) => t.status === "in_progress");
   const done = tasks.filter((t) => t.status === "done");
 
+  const handleStartTask = async (taskId: string) => {
+    setUpdatingTaskId(taskId);
+    try {
+      await markInProgressMutation.mutateAsync(taskId);
+      toast.success("Task started! Let's get to work! 💪");
+    } catch (err: unknown) {
+      const e = err as { response?: { data?: { message?: string } } };
+      toast.error(e.response?.data?.message ?? "Failed to start task");
+    } finally {
+      setUpdatingTaskId(null);
+    }
+  };
+
   const handleMarkDone = async (taskId: string) => {
-    setCompleting(taskId);
+    setUpdatingTaskId(taskId);
     try {
       await markDoneMutation.mutateAsync(taskId);
       toast.success("Task marked as done! 🎉");
     } catch (err: unknown) {
       const e = err as { response?: { data?: { message?: string } } };
-      toast.error(e.response?.data?.message ?? "Failed to update task");
+      toast.error(e.response?.data?.message ?? "Failed to complete task");
     } finally {
-      setCompleting(null);
+      setUpdatingTaskId(null);
     }
   };
 
@@ -47,7 +66,7 @@ export function EmployeeTasksPage() {
         <div>
           <h1 className="page-title">My Tasks</h1>
           <p className="page-subtitle">
-            {pending.length} pending · {done.length} completed
+            {pending.length} pending · {inProgress.length} in progress · {done.length} completed
           </p>
         </div>
       </div>
@@ -80,7 +99,37 @@ export function EmployeeTasksPage() {
                     key={task.id}
                     task={task}
                     index={i}
-                    isCompleting={completing === task.id}
+                    isUpdating={updatingTaskId === task.id}
+                    onStartTask={handleStartTask}
+                    onMarkDone={handleMarkDone}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {inProgress.length > 0 && (
+            <div style={{ marginBottom: 32 }}>
+              <h2
+                style={{
+                  fontSize: 14,
+                  fontWeight: 700,
+                  color: "var(--info)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                  marginBottom: 16,
+                }}
+              >
+                In Progress ({inProgress.length})
+              </h2>
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                {inProgress.map((task, i) => (
+                  <EmployeeTaskCard
+                    key={task.id}
+                    task={task}
+                    index={i}
+                    isUpdating={updatingTaskId === task.id}
+                    onStartTask={handleStartTask}
                     onMarkDone={handleMarkDone}
                   />
                 ))}
@@ -94,7 +143,7 @@ export function EmployeeTasksPage() {
                 style={{
                   fontSize: 14,
                   fontWeight: 700,
-                  color: "var(--text-muted)",
+                  color: "var(--success)",
                   textTransform: "uppercase",
                   letterSpacing: "0.08em",
                   marginBottom: 16,
@@ -108,7 +157,8 @@ export function EmployeeTasksPage() {
                     key={task.id}
                     task={task}
                     index={i}
-                    isCompleting={false}
+                    isUpdating={false}
+                    onStartTask={handleStartTask}
                     onMarkDone={handleMarkDone}
                   />
                 ))}
@@ -120,3 +170,4 @@ export function EmployeeTasksPage() {
     </div>
   );
 }
+
