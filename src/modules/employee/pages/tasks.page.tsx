@@ -7,31 +7,42 @@ import {
   useMarkTaskInProgressMutation,
   useMarkTaskPendingMutation,
   useTaskSocketSync,
+  useTablePagination,
 } from "@/shared/hooks";
 import {
+  Button,
   EmptyState,
   PageHeader,
   Skeleton,
   TaskListSkeleton,
-  Typography,
 } from "@/shared/components";
-import { EmployeeTaskCard } from "../components";
-import type { TaskObject } from "@/common/models/task";
+import { EmployeeTasksTable } from "../components";
 import { ETaskStatus } from "@/common/models/task";
+
+type TaskFilter = "all" | "pending" | "in_progress" | "done";
 
 export function EmployeeTasksPage() {
   useTaskSocketSync();
-  const { data, isLoading } = useQueryMyTasks();
+  const [filter, setFilter] = useState<TaskFilter>("all");
+  const { pagination, setPagination } = useTablePagination();
+
+  const {
+    data,
+    isLoading,
+    isFetching,
+  } = useQueryMyTasks({
+    limit: pagination.pageSize,
+    offset: pagination.pageIndex * pagination.pageSize,
+    ...(filter !== "all" ? { status: filter } : {}),
+  });
+
   const markDoneMutation = useMarkTaskDoneMutation();
   const markInProgressMutation = useMarkTaskInProgressMutation();
   const markPendingMutation = useMarkTaskPendingMutation();
   const [updatingTaskId, setUpdatingTaskId] = useState<string | null>(null);
 
   const tasks = data?.tasks ?? [];
-  const totalTasks = data?.total_record ?? tasks.length;
-  const pending = tasks.filter((t) => t.status === "pending");
-  const inProgress = tasks.filter((t) => t.status === "in_progress");
-  const done = tasks.filter((t) => t.status === "done");
+  const totalTasks = data?.total_record ?? 0;
 
   const handleStatusChange = async (taskId: string, newStatus: ETaskStatus) => {
     setUpdatingTaskId(taskId);
@@ -54,6 +65,9 @@ export function EmployeeTasksPage() {
     }
   };
 
+  const filterLabel =
+    filter === "all" ? "tasks" : filter === "in_progress" ? "in progress tasks" : `${filter} tasks`;
+
   if (isLoading) {
     return (
       <div>
@@ -70,72 +84,41 @@ export function EmployeeTasksPage() {
     <div>
       <PageHeader
         title="My Tasks"
-        subtitle={`${totalTasks} total · ${pending.length} pending · ${inProgress.length} in progress · ${done.length} completed`}
+        subtitle={`${totalTasks} total ${filterLabel}`}
       />
+
+      <div className="mb-6 flex flex-wrap gap-2">
+        {(["all", "pending", "in_progress", "done"] as const).map((f) => (
+          <Button
+            key={f}
+            variant={filter === f ? "secondary" : "ghost"}
+            size="sm"
+            className="w-auto capitalize"
+            onClick={() => setFilter(f)}
+          >
+            {f === "in_progress" ? "In Progress" : f}
+          </Button>
+        ))}
+      </div>
 
       {tasks.length === 0 ? (
         <EmptyState
           icon="🎯"
-          title="No tasks yet"
+          title={`No ${filter !== "all" ? (filter === "in_progress" ? "in progress" : filter) : ""} tasks`}
           description="Your manager will assign tasks to you soon"
         />
       ) : (
-        <div>
-          {pending.length > 0 && (
-            <TaskElement
-              title="Pending"
-              tasks={pending}
-              updatingTaskId={updatingTaskId}
-              onStatusChange={handleStatusChange}
-            />
-          )}
-
-          {inProgress.length > 0 && (
-            <TaskElement
-              title="In Progress"
-              tasks={inProgress}
-              updatingTaskId={updatingTaskId}
-              onStatusChange={handleStatusChange}
-            />
-          )}
-
-          {done.length > 0 && (
-            <TaskElement
-              title="Completed"
-              tasks={done}
-              updatingTaskId={updatingTaskId}
-              onStatusChange={handleStatusChange}
-            />
-          )}
-        </div>
+        <EmployeeTasksTable
+          tasks={tasks}
+          isLoading={isLoading}
+          isFetching={isFetching}
+          totalItems={totalTasks}
+          pagination={pagination}
+          setPagination={setPagination}
+          updatingTaskId={updatingTaskId}
+          onStatusChange={handleStatusChange}
+        />
       )}
     </div>
   );
 }
-
-type TaskElementProps = {
-  title: string;
-  tasks: TaskObject[];
-  updatingTaskId: string | null;
-  onStatusChange: (id: string, status: ETaskStatus) => void;
-};
-const TaskElement = ({ title, tasks, updatingTaskId, onStatusChange }: TaskElementProps) => {
-  return (
-    <div className="mb-8 flex flex-col gap-2">
-      <Typography variant="overline" color="default">
-        {title} ({tasks.length})
-      </Typography>
-      <div className="flex flex-col gap-3">
-        {tasks.map((task, i) => (
-          <EmployeeTaskCard
-            key={task.id}
-            task={task}
-            index={i}
-            isUpdating={updatingTaskId === task.id}
-            onStatusChange={onStatusChange}
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
