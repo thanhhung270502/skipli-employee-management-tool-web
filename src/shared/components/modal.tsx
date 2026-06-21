@@ -27,7 +27,7 @@ export function Modal({
     <AnimatePresence>
       {open && (
         <motion.div
-          className="z-tooltip fixed inset-0 flex items-center justify-center bg-black/70 p-6 backdrop-blur-sm"
+          className="z-dialog fixed inset-0 flex items-center justify-center bg-black/70 p-6 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

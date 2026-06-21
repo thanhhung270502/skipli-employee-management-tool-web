@@ -1,10 +1,26 @@
 "use client";
 import { Calendar } from "lucide-react";
-import { FormProvider, useFormContext } from "react-hook-form";
+import { FormProvider, useFormContext, Controller } from "react-hook-form";
 import type { UseFormReturn } from "react-hook-form";
 import type { EmployeeObject } from "@/common/models/employee";
+import { ETaskPriority } from "@/common/models/task";
 import type { TaskFormData } from "../hooks/use-task-form";
-import { Button, FormField, Input, Modal, Select, Textarea } from "@/shared/components";
+import {
+  Button,
+  FormField,
+  Input,
+  Modal,
+  Select,
+  Textarea,
+  getOptionsValue,
+  onSelectChange,
+} from "@/shared/components";
+
+const PRIORITY_OPTIONS = [
+  { value: ETaskPriority.LOW, label: "Low 🟢" },
+  { value: ETaskPriority.MEDIUM, label: "Medium 🟡" },
+  { value: ETaskPriority.HIGH, label: "High 🔴" },
+];
 
 interface TaskFormModalProps {
   open: boolean;
@@ -19,8 +35,14 @@ interface TaskFormModalProps {
 function TaskFormFields({ employees }: { employees: EmployeeObject[] }) {
   const {
     register,
+    control,
     formState: { errors },
   } = useFormContext<TaskFormData>();
+
+  const employeeOptions = employees.map((e) => ({
+    value: e.id,
+    label: `${e.name} — ${e.department}`,
+  }));
 
   return (
     <>
@@ -38,14 +60,22 @@ function TaskFormFields({ employees }: { employees: EmployeeObject[] }) {
           error={errors.assignedTo?.message}
           hint={employees.length === 0 ? "No active employees yet" : undefined}
         >
-          <Select {...register("assignedTo")}>
-            <option value="">Select employee...</option>
-            {employees.map((e) => (
-              <option key={e.id} value={e.id}>
-                {e.name} — {e.department}
-              </option>
-            ))}
-          </Select>
+          <Controller
+            name="assignedTo"
+            control={control}
+            render={({ field }) => (
+              <Select
+                options={employeeOptions}
+                value={getOptionsValue(employeeOptions, field.value) ?? null}
+                onChange={onSelectChange(field.onChange)}
+                placeholder="Select employee..."
+                disabled={employees.length === 0}
+                isSearchable
+                isClearable={false}
+                fullWidth
+              />
+            )}
+          />
         </FormField>
 
         <FormField
@@ -61,11 +91,20 @@ function TaskFormFields({ employees }: { employees: EmployeeObject[] }) {
       </div>
 
       <FormField label="Priority">
-        <Select {...register("priority")}>
-          <option value="low">Low 🟢</option>
-          <option value="medium">Medium 🟡</option>
-          <option value="high">High 🔴</option>
-        </Select>
+        <Controller
+          name="priority"
+          control={control}
+          render={({ field }) => (
+            <Select
+              options={PRIORITY_OPTIONS}
+              value={getOptionsValue(PRIORITY_OPTIONS, field.value) ?? null}
+              onChange={onSelectChange(field.onChange)}
+              isSearchable={false}
+              isClearable={false}
+              fullWidth
+            />
+          )}
+        />
       </FormField>
     </>
   );
