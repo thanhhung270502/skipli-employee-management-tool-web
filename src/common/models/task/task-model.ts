@@ -54,11 +54,13 @@ export interface DeleteTaskResponse {
   message: string;
 }
 
-export interface GetAllTasksResponse {
+import type { PaginatedMeta } from "@/common/types";
+
+export interface GetAllTasksResponse extends PaginatedMeta {
   tasks: TaskObject[];
 }
 
-export interface GetMyTasksResponse {
+export interface GetMyTasksResponse extends PaginatedMeta {
   tasks: TaskObject[];
 }
 

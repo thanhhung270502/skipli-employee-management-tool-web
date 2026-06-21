@@ -6,3 +6,7 @@ export * from "./employee-table";
 export * from "./task-form-modal";
 export * from "./task-card";
 export * from "./employee-detail-modal";
+
+// Tasks
+export * from "./tasks/owner-tasks-table";
+export * from "./tasks/owner-tasks-actions";

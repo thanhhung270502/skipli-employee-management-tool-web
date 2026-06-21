@@ -14,6 +14,18 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
   ]),
   {
+    plugins: {
+      "react-hooks": pluginReactHooks,
+    },
+    settings: { react: { version: "detect" } },
+    rules: {
+      ...pluginReactHooks.configs.recommended.rules,
+      "react-hooks/set-state-in-effect": "off",
+      // React scope no longer necessary with new JSX transform.
+      "react/react-in-jsx-scope": "off",
+    },
+  },
+  {
     rules: {
       "@next/next/no-img-element": "off",
       "@next/next/google-font-display": "off",

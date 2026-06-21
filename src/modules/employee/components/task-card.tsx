@@ -4,7 +4,14 @@ import { CheckCircle, Clock, Calendar, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import type { TaskObject } from "@/common/models/task";
 import { ETaskStatus } from "@/common/models/task";
-import { Badge, Card, Typography } from "@/shared/components";
+import {
+  Badge,
+  Card,
+  Typography,
+  Select,
+  getOptionsValue,
+  onSelectChange,
+} from "@/shared/components";
 import { cn } from "@/shared/utils";
 
 interface EmployeeTaskCardProps {
@@ -46,12 +53,6 @@ const STATUS_OPTIONS: { value: ETaskStatus; label: string }[] = [
   { value: ETaskStatus.IN_PROGRESS, label: "In Progress" },
   { value: ETaskStatus.DONE, label: "Done" },
 ];
-
-const statusSelectStyle: Record<ETaskStatus, string> = {
-  [ETaskStatus.PENDING]: "border-warning/60 bg-warning/10 text-warning focus:ring-warning/40",
-  [ETaskStatus.IN_PROGRESS]: "border-info/60 bg-info/10 text-info focus:ring-info/40",
-  [ETaskStatus.DONE]: "border-success/60 bg-success/10 text-success focus:ring-success/40",
-};
 
 export function EmployeeTaskCard({
   task,
@@ -123,8 +124,9 @@ export function EmployeeTaskCard({
           <div className="flex flex-wrap items-center gap-3">
             {dueDate && (
               <Typography variant="caption" color="muted" className="flex items-center gap-1">
+                <span className="font-semibold">Due:</span>
                 <Calendar size={11} />
-                Due {format(dueDate, "MMM d, yyyy")}
+                {format(dueDate, "MMM d, yyyy")}
               </Typography>
             )}
             {completedAt && isDone && (
@@ -140,29 +142,25 @@ export function EmployeeTaskCard({
           {isUpdating ? (
             <div
               className={cn(
-                "flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium",
-                statusSelectStyle[task.status as ETaskStatus]
+                "flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium"
               )}
             >
               <Loader2 size={11} className="animate-spin" />
               Updating...
             </div>
           ) : (
-            <select
-              value={task.status}
+            <Select
+              value={getOptionsValue(STATUS_OPTIONS, task.status) ?? null}
+              options={STATUS_OPTIONS}
+              onChange={onSelectChange((value) => onStatusChange(task.id, value as ETaskStatus))}
               disabled={isUpdating}
-              onChange={(e) => onStatusChange(task.id, e.target.value as ETaskStatus)}
-              className={cn(
-                "cursor-pointer appearance-none rounded-md border px-2.5 py-1.5 pr-7 text-xs font-semibold transition-all outline-none focus:ring-2",
-                statusSelectStyle[task.status as ETaskStatus]
-              )}
-            >
-              {STATUS_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+              size="sm"
+              isSearchable={false}
+              isClearable={false}
+              className="w-auto min-w-32!"
+              wrapperClassName="gap-0"
+              controlClassName={cn("!min-h-0 !px-2.5 !py-1.5 text-xs font-semibold")}
+            />
           )}
         </div>
       </Card>

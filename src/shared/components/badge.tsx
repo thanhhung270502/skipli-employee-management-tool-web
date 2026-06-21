@@ -12,7 +12,7 @@ export interface BadgeProps {
 
 const variantClasses: Record<BadgeVariant, string> = {
   success: "bg-success-50 text-success",
-  warning: "bg-warning-50 text-warning",
+  warning: "bg-warning-50 text-warning-hover",
   danger: "bg-error-50 text-error",
   info: "bg-blue-50 text-info",
   purple: "bg-purple-50 text-purple-600",

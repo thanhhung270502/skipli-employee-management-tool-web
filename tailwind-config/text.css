@@ -19,6 +19,27 @@
   color: var(--color-brand-primary-dark);
 }
 
+@utility text-purple {
+  color: var(--color-purple-500);
+}
+
+@utility text-purple-alt {
+  color: var(--color-purple-100);
+}
+
+@utility text-purple-hover {
+  color: var(--color-purple-600);
+}
+
+@utility text-purple-disabled {
+  color: var(--color-purple-200);
+}
+
+@utility text-purple-solid {
+  color: var(--color-purple-900);
+}
+
+
 /* Text Secondary Colors */
 @utility text-brand-secondary {
   color: var(--color-success-600);
@@ -172,29 +193,29 @@
 
 /* Other Colors */
 @utility text-primary {
-  color: var(--color-neutral-900);
+  color: var(--color-white);
 }
 
 @utility text-secondary {
-  color: var(--color-neutral-700);
+  color: var(--color-neutral-200);
 }
 
 @utility text-tertiary {
-  color: var(--color-neutral-600);
+  color: var(--color-neutral-300);
 }
 
 @utility text-quaternary {
-  color: var(--color-neutral-500);
-}
-
-@utility text-disabled {
   color: var(--color-neutral-400);
 }
 
+@utility text-disabled {
+  color: var(--color-neutral-300);
+}
+
 @utility text-placeholder {
-  color: var(--color-neutral-500);
+  color: var(--color-neutral-400);
 }
 
 @utility text-placeholder-subtle {
-  color: var(--color-neutral-300);
+  color: var(--color-neutral-200);
 }

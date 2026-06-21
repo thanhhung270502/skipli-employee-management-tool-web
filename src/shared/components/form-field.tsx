@@ -3,7 +3,7 @@ import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { Typography } from "@/shared/components/typography";
 import { cn } from "@/shared/utils";
 
-export const inputClassName =
+const inputClassName =
   "w-full rounded-md border border-brand-primary bg-brand-primary-dark-hover px-4 py-3 text-[15px] text-white outline-none transition-all placeholder:text-brand-primary-light/50 focus:border-brand-primary-light focus:ring-[3px] focus:ring-brand-primary-light/15 disabled:cursor-not-allowed disabled:opacity-50";
 
 type FormFieldProps = {
@@ -56,9 +56,9 @@ export const Textarea = forwardRef<HTMLTextAreaElement, ComponentPropsWithoutRef
 );
 Textarea.displayName = "Textarea";
 
-export const Select = forwardRef<HTMLSelectElement, ComponentPropsWithoutRef<"select">>(
-  ({ className, ...props }, ref) => (
-    <select ref={ref} className={cn(inputClassName, "cursor-pointer", className)} {...props} />
-  )
-);
-Select.displayName = "Select";
+// export const Select = forwardRef<HTMLSelectElement, ComponentPropsWithoutRef<"select">>(
+//   ({ className, ...props }, ref) => (
+//     <select ref={ref} className={cn(inputClassName, "cursor-pointer", className)} {...props} />
+//   )
+// );
+// Select.displayName = "Select";

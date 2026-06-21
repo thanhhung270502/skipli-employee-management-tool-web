@@ -26,8 +26,8 @@ export function DashboardPage() {
   const tasks = taskData?.tasks ?? [];
 
   const stats = {
-    totalEmployees: employees.length,
-    totalTasks: tasks.length,
+    totalEmployees: empData?.total_record ?? employees.length,
+    totalTasks: taskData?.total_record ?? tasks.length,
     pendingTasks: tasks.filter((t) => t.status === "pending").length,
     doneTasks: tasks.filter((t) => t.status === "done").length,
   };

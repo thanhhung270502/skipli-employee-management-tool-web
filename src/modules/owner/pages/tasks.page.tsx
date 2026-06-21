@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import toast from "react-hot-toast";
 import {
@@ -8,26 +8,49 @@ import {
   useCreateTaskMutation,
   useUpdateTaskMutation,
   useTaskSocketSync,
+  useTablePagination,
 } from "@/shared/hooks";
-import { Button, EmptyState, PageHeader, Skeleton, TaskListSkeleton } from "@/shared/components";
+import {
+  Button,
+  EmptyState,
+  PageHeader,
+  Pagination,
+  Skeleton,
+  TaskListSkeleton,
+} from "@/shared/components";
 import { formatToInputDate } from "@/shared/utils";
+import { DEFAULT_PAGE_SIZE } from "@/common/types";
 import { useTaskForm } from "../hooks";
-import { TaskCard, TaskFormModal } from "../components";
+import { OwnerTasksTable, TaskCard, TaskFormModal } from "../components";
 import type { TaskObject } from "@/common/models/task";
+
+type TaskFilter = "all" | "pending" | "in_progress" | "done";
 
 export function TasksPage() {
   useTaskSocketSync();
-  const { data: taskData, isLoading: tasksLoading } = useQueryAllTasks();
+  const [filter, setFilter] = useState<TaskFilter>("all");
+  const [page, setPage] = useState(0);
+  const { pagination, setPagination } = useTablePagination();
+
+  const {
+    data: taskData,
+    isLoading: tasksLoading,
+    isFetching,
+  } = useQueryAllTasks({
+    limit: pagination.pageSize,
+    offset: pagination.pageIndex * pagination.pageSize,
+    ...(filter !== "all" ? { status: filter } : {}),
+  });
   const { data: empData } = useQueryEmployees();
   const createTaskMutation = useCreateTaskMutation();
   const updateTaskMutation = useUpdateTaskMutation();
 
   const tasks = taskData?.tasks ?? [];
+  const totalTasks = taskData?.total_record ?? 0;
   const activeEmployees = (empData?.employees ?? []).filter((e) => e.isSetup);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<TaskObject | null>(null);
-  const [filter, setFilter] = useState<"all" | "pending" | "in_progress" | "done">("all");
 
   const { methods, reset } = useTaskForm();
 
@@ -76,13 +99,14 @@ export function TasksPage() {
     }
   });
 
-  const filtered = tasks.filter((t) => (filter === "all" ? true : t.status === filter));
-
   const openCreateModal = () => {
     setEditingTask(null);
     reset();
     setModalOpen(true);
   };
+
+  const filterLabel =
+    filter === "all" ? "tasks" : filter === "in_progress" ? "in progress tasks" : `${filter} tasks`;
 
   if (tasksLoading) {
     return (
@@ -100,7 +124,7 @@ export function TasksPage() {
     <div>
       <PageHeader
         title="Tasks"
-        subtitle={`${tasks.length} total task${tasks.length !== 1 ? "s" : ""}`}
+        subtitle={`${totalTasks} total ${filterLabel}`}
         action={
           <Button variant="secondary" className="w-auto" onClick={openCreateModal}>
             <Plus size={16} /> Create Task
@@ -117,19 +141,12 @@ export function TasksPage() {
             className="w-auto capitalize"
             onClick={() => setFilter(f)}
           >
-            {f === "in_progress" ? "In Progress" : f}{" "}
-            {f === "all"
-              ? `(${tasks.length})`
-              : f === "pending"
-                ? `(${tasks.filter((t) => t.status === "pending").length})`
-                : f === "in_progress"
-                  ? `(${tasks.filter((t) => t.status === "in_progress").length})`
-                  : `(${tasks.filter((t) => t.status === "done").length})`}
+            {f === "in_progress" ? "In Progress" : f}
           </Button>
         ))}
       </div>
 
-      {filtered.length === 0 ? (
+      {tasks.length === 0 ? (
         <EmptyState
           icon="📋"
           title={`No ${filter !== "all" ? (filter === "in_progress" ? "in progress" : filter) : ""} tasks`}
@@ -141,11 +158,15 @@ export function TasksPage() {
           }
         />
       ) : (
-        <div className="flex flex-col gap-3">
-          {filtered.map((task, i) => (
-            <TaskCard key={task.id} task={task} index={i} onEdit={() => handleEditClick(task)} />
-          ))}
-        </div>
+        <OwnerTasksTable
+          tasks={tasks}
+          isLoading={tasksLoading}
+          isFetching={isFetching}
+          totalItems={totalTasks}
+          pagination={pagination}
+          setPagination={setPagination}
+          onEdit={handleEditClick}
+        />
       )}
 
       <TaskFormModal

@@ -18,5 +18,5 @@ export interface APIDefinition<TRequest = unknown, TResponse = unknown> {
   subUrl: string;
   requestBody: TRequest;
   responseBody: TResponse;
-  buildUrlPath: (...args: string[]) => string;
+  buildUrlPath: (...args: any[]) => string;
 }

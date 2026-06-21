@@ -11,8 +11,14 @@ export * from "./form-field";
 export * from "./alert";
 export * from "./modal";
 export * from "./empty-state";
+export * from "./pagination";
 export * from "./divider";
 export * from "./auth-layout";
 export * from "./error-layout";
 export * from "./app-layout";
 export * from "./chat-ui";
+export * from "./separator";
+export * from "./select";
+
+// Table
+export * from "./table";

@@ -60,7 +60,9 @@ export interface DeleteEmployeeResponse {
   message: string;
 }
 
-export interface GetAllEmployeesResponse {
+import type { PaginatedMeta } from "@/common/types";
+
+export interface GetAllEmployeesResponse extends PaginatedMeta {
   employees: EmployeeObject[];
 }
 

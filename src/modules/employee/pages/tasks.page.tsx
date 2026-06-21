@@ -28,6 +28,7 @@ export function EmployeeTasksPage() {
   const [updatingTaskId, setUpdatingTaskId] = useState<string | null>(null);
 
   const tasks = data?.tasks ?? [];
+  const totalTasks = data?.total_record ?? tasks.length;
   const pending = tasks.filter((t) => t.status === "pending");
   const inProgress = tasks.filter((t) => t.status === "in_progress");
   const done = tasks.filter((t) => t.status === "done");
@@ -69,7 +70,7 @@ export function EmployeeTasksPage() {
     <div>
       <PageHeader
         title="My Tasks"
-        subtitle={`${pending.length} pending · ${inProgress.length} in progress · ${done.length} completed`}
+        subtitle={`${totalTasks} total · ${pending.length} pending · ${inProgress.length} in progress · ${done.length} completed`}
       />
 
       {tasks.length === 0 ? (

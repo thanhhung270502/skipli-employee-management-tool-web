@@ -1,5 +1,5 @@
-import type { APIDefinition } from "@/common/types";
-import { APIMethod, APIBaseRoutes } from "@/common/types";
+import type { APIDefinition, PaginationParams } from "@/common/types";
+import { APIMethod, APIBaseRoutes, buildPaginationQueryString } from "@/common/types";
 import type {
   CreateTaskRequest,
   CreateTaskResponse,
@@ -19,7 +19,8 @@ export const API_GET_ALL_TASKS: APIDefinition<undefined, GetAllTasksResponse> = 
   subUrl: "/tasks",
   requestBody: undefined,
   responseBody: {} as GetAllTasksResponse,
-  buildUrlPath: () => `${APIBaseRoutes.OWNER}/tasks`,
+  buildUrlPath: (params?: PaginationParams & { status?: string }) =>
+    `${APIBaseRoutes.OWNER}/tasks${buildPaginationQueryString(params)}`,
 };
 
 export const API_CREATE_TASK: APIDefinition<CreateTaskRequest, CreateTaskResponse> = {
@@ -55,7 +56,8 @@ export const API_GET_MY_TASKS: APIDefinition<undefined, GetMyTasksResponse> = {
   subUrl: "/tasks",
   requestBody: undefined,
   responseBody: {} as GetMyTasksResponse,
-  buildUrlPath: () => `${APIBaseRoutes.EMPLOYEE}/tasks`,
+  buildUrlPath: (params?: PaginationParams & { status?: string }) =>
+    `${APIBaseRoutes.EMPLOYEE}/tasks${buildPaginationQueryString(params)}`,
 };
 
 export const API_MARK_TASK_IN_PROGRESS: APIDefinition<undefined, MarkTaskInProgressResponse> = {

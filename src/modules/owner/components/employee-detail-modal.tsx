@@ -14,6 +14,7 @@ export function EmployeeDetailModal({ open, employee, onClose }: EmployeeDetailM
   const employeeId = employee?.id ?? "";
   const { data, isLoading } = useQueryEmployeeTasks(employeeId, open && !!employee);
   const tasks = data?.tasks ?? [];
+  const totalTasks = data?.total_record ?? tasks.length;
 
   if (!employee) return null;
 
@@ -105,7 +106,7 @@ export function EmployeeDetailModal({ open, employee, onClose }: EmployeeDetailM
             className="flex items-center gap-2 text-sm font-bold"
           >
             <ClipboardList size={16} className="text-indigo-400" />
-            Assigned Tasks ({tasks.length})
+            Assigned Tasks ({totalTasks})
           </Typography>
 
           <div className="max-h-[220px] space-y-2.5 overflow-y-auto pr-1">
@@ -119,7 +120,7 @@ export function EmployeeDetailModal({ open, employee, onClose }: EmployeeDetailM
               tasks.map((task) => (
                 <Card
                   key={task.id}
-                  className="flex items-center justify-between gap-4 border border-white/5 p-3.5 transition-colors hover:border-white/10"
+                  className="bg-brand-primary-dark-hover flex items-center justify-between gap-4 border border-white/5 p-3.5 transition-colors hover:border-white/10"
                 >
                   <div className="min-w-0 flex-1">
                     <Typography variant="small" color="primary" className="truncate font-semibold">

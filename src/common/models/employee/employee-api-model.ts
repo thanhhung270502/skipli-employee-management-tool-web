@@ -1,5 +1,6 @@
-import type { APIDefinition } from "@/common/types";
-import { APIMethod, APIBaseRoutes } from "@/common/types";
+import type { APIDefinition, PaginationParams } from "@/common/types";
+import { APIMethod, APIBaseRoutes, buildPaginationQueryString } from "@/common/types";
+import type { GetMyTasksResponse } from "@/common/models/task";
 import type {
   GetAllEmployeesResponse,
   GetEmployeeResponse,
@@ -19,7 +20,8 @@ export const API_GET_ALL_EMPLOYEES: APIDefinition<undefined, GetAllEmployeesResp
   subUrl: "/employees",
   requestBody: undefined,
   responseBody: {} as GetAllEmployeesResponse,
-  buildUrlPath: () => `${APIBaseRoutes.OWNER}/employees`,
+  buildUrlPath: (params?: PaginationParams & { search?: string }) =>
+    `${APIBaseRoutes.OWNER}/employees${buildPaginationQueryString(params)}`,
 };
 
 export const API_GET_EMPLOYEE: APIDefinition<{ employeeId: string }, GetEmployeeResponse> = {
@@ -29,6 +31,19 @@ export const API_GET_EMPLOYEE: APIDefinition<{ employeeId: string }, GetEmployee
   requestBody: {} as { employeeId: string },
   responseBody: {} as GetEmployeeResponse,
   buildUrlPath: (id: string) => `${APIBaseRoutes.OWNER}/employees/${id}`,
+};
+
+export const API_GET_EMPLOYEE_TASKS: APIDefinition<{ employeeId: string }, GetMyTasksResponse> = {
+  method: APIMethod.GET,
+  baseUrl: APIBaseRoutes.OWNER,
+  subUrl: "/employees/:employeeId/tasks",
+  requestBody: {} as { employeeId: string },
+  responseBody: {} as GetMyTasksResponse,
+  buildUrlPath: (
+    id: string,
+    params?: PaginationParams & { status?: string }
+  ) =>
+    `${APIBaseRoutes.OWNER}/employees/${id}/tasks${buildPaginationQueryString(params)}`,
 };
 
 export const API_CREATE_EMPLOYEE: APIDefinition<CreateEmployeeRequest, CreateEmployeeResponse> = {

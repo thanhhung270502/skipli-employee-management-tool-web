@@ -16,6 +16,7 @@ type BaseProps = {
   loadingText?: string;
   href?: string;
   children?: ReactNode;
+  rounded?: "regular" | "full";
 };
 
 export type ButtonProps = BaseProps &
@@ -33,7 +34,7 @@ const variantClasses: Record<Exclude<ButtonVariant, "custom">, string> = {
     "w-full bg-brand-primary-dark text-white shadow-md hover:bg-brand-primary-hover hover:-translate-y-px active:translate-y-0 disabled:hover:translate-y-0",
   ghost:
     "border border-brand-primary bg-transparent text-brand-primary-light hover:bg-brand-primary-dark-hover hover:text-white",
-  danger: "border border-error/20 bg-error/10 text-error hover:border-error hover:bg-error/20",
+  danger: "border border-error-alt bg-error-alt text-error hover:border-error hover:bg-error/20",
   success:
     "border border-success/20 bg-success/10 text-success hover:border-success hover:bg-success/20",
 };
@@ -49,6 +50,7 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
     {
       variant = "primary",
       size = "md",
+      rounded = "regular",
       iconOnly = false,
       loading = false,
       loadingText,
@@ -67,6 +69,7 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
       !isCustom && variantClasses[variant],
       !isCustom && sizeClasses[size],
       !isCustom && iconOnly && "size-9 p-0",
+      !isCustom && rounded === "full" && "rounded-full",
       className
     );
 
