@@ -11,6 +11,14 @@ export const employeeFormSchema = z.object({
   phone: z.string().optional(),
   department: z.string().min(1, "Department is required"),
   role: z.string().optional(),
+  workSchedule: z
+    .object({
+      days: z.array(z.string()),
+      startTime: z.string(),
+      endTime: z.string(),
+    })
+    .optional()
+    .nullable(),
 });
 export type EmployeeFormData = z.infer<typeof employeeFormSchema>;
 
@@ -20,6 +28,7 @@ const EMPTY_FORM: EmployeeFormData = {
   phone: "",
   department: "",
   role: "Employee",
+  workSchedule: null,
 };
 
 // ─── Hook ────────────────────────────────────────────────
@@ -40,6 +49,7 @@ export const useEmployeeForm = () => {
       phone: emp.phone ?? "",
       department: emp.department,
       role: emp.role,
+      workSchedule: emp.workSchedule ?? null,
     });
   };
 

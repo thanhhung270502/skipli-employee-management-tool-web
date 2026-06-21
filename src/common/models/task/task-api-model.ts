@@ -10,6 +10,7 @@ import type {
   GetMyTasksResponse,
   MarkTaskInProgressResponse,
   MarkTaskDoneResponse,
+  MarkTaskPendingResponse,
 } from "./task-model";
 
 export const API_GET_ALL_TASKS: APIDefinition<undefined, GetAllTasksResponse> = {
@@ -21,10 +22,7 @@ export const API_GET_ALL_TASKS: APIDefinition<undefined, GetAllTasksResponse> = 
   buildUrlPath: () => `${APIBaseRoutes.OWNER}/tasks`,
 };
 
-export const API_CREATE_TASK: APIDefinition<
-  CreateTaskRequest,
-  CreateTaskResponse
-> = {
+export const API_CREATE_TASK: APIDefinition<CreateTaskRequest, CreateTaskResponse> = {
   method: APIMethod.POST,
   baseUrl: APIBaseRoutes.OWNER,
   subUrl: "/tasks",
@@ -33,10 +31,7 @@ export const API_CREATE_TASK: APIDefinition<
   buildUrlPath: () => `${APIBaseRoutes.OWNER}/tasks`,
 };
 
-export const API_UPDATE_TASK: APIDefinition<
-  UpdateTaskRequest,
-  UpdateTaskResponse
-> = {
+export const API_UPDATE_TASK: APIDefinition<UpdateTaskRequest, UpdateTaskResponse> = {
   method: APIMethod.PUT,
   baseUrl: APIBaseRoutes.OWNER,
   subUrl: "/tasks/:taskId",
@@ -45,10 +40,7 @@ export const API_UPDATE_TASK: APIDefinition<
   buildUrlPath: (id: string) => `${APIBaseRoutes.OWNER}/tasks/${id}`,
 };
 
-export const API_DELETE_TASK: APIDefinition<
-  undefined,
-  DeleteTaskResponse
-> = {
+export const API_DELETE_TASK: APIDefinition<undefined, DeleteTaskResponse> = {
   method: APIMethod.DELETE,
   baseUrl: APIBaseRoutes.OWNER,
   subUrl: "/tasks/:taskId",
@@ -66,10 +58,7 @@ export const API_GET_MY_TASKS: APIDefinition<undefined, GetMyTasksResponse> = {
   buildUrlPath: () => `${APIBaseRoutes.EMPLOYEE}/tasks`,
 };
 
-export const API_MARK_TASK_IN_PROGRESS: APIDefinition<
-  undefined,
-  MarkTaskInProgressResponse
-> = {
+export const API_MARK_TASK_IN_PROGRESS: APIDefinition<undefined, MarkTaskInProgressResponse> = {
   method: APIMethod.PUT,
   baseUrl: APIBaseRoutes.EMPLOYEE,
   subUrl: "/tasks/:taskId/in-progress",
@@ -78,10 +67,7 @@ export const API_MARK_TASK_IN_PROGRESS: APIDefinition<
   buildUrlPath: (id: string) => `${APIBaseRoutes.EMPLOYEE}/tasks/${id}/in-progress`,
 };
 
-export const API_MARK_TASK_DONE: APIDefinition<
-  undefined,
-  MarkTaskDoneResponse
-> = {
+export const API_MARK_TASK_DONE: APIDefinition<undefined, MarkTaskDoneResponse> = {
   method: APIMethod.PUT,
   baseUrl: APIBaseRoutes.EMPLOYEE,
   subUrl: "/tasks/:taskId/done",
@@ -90,3 +76,11 @@ export const API_MARK_TASK_DONE: APIDefinition<
   buildUrlPath: (id: string) => `${APIBaseRoutes.EMPLOYEE}/tasks/${id}/done`,
 };
 
+export const API_MARK_TASK_PENDING: APIDefinition<undefined, MarkTaskPendingResponse> = {
+  method: APIMethod.PUT,
+  baseUrl: APIBaseRoutes.EMPLOYEE,
+  subUrl: "/tasks/:taskId/pending",
+  requestBody: undefined,
+  responseBody: {} as MarkTaskPendingResponse,
+  buildUrlPath: (id: string) => `${APIBaseRoutes.EMPLOYEE}/tasks/${id}/pending`,
+};

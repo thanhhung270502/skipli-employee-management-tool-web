@@ -108,7 +108,7 @@ export function EmployeeProfilePage() {
                   </FormField>
                 </div>
 
-                <Typography variant="caption" color="muted" className="mb-5">
+                <Typography variant="caption" as="div" color="muted" className="mb-3">
                   Department and role can only be changed by your manager.
                 </Typography>
 

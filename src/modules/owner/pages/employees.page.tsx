@@ -19,7 +19,7 @@ import {
 } from "@/shared/components";
 import type { EmployeeObject } from "@/common/models/employee";
 import { useEmployeeForm } from "../hooks";
-import { EmployeeFormModal, EmployeeTable } from "../components";
+import { EmployeeFormModal, EmployeeTable, EmployeeDetailModal } from "../components";
 
 export function EmployeesPage() {
   const { data, isLoading } = useQueryEmployees();
@@ -31,6 +31,7 @@ export function EmployeesPage() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editEmployee, setEditEmployee] = useState<EmployeeObject | null>(null);
+  const [detailEmployee, setDetailEmployee] = useState<EmployeeObject | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [search, setSearch] = useState("");
 
@@ -128,7 +129,12 @@ export function EmployeesPage() {
           }
         />
       ) : (
-        <EmployeeTable employees={filtered} onEdit={openEditModal} onDelete={setDeleteConfirm} />
+        <EmployeeTable
+          employees={filtered}
+          onEdit={openEditModal}
+          onDelete={setDeleteConfirm}
+          onViewDetail={setDetailEmployee}
+        />
       )}
 
       <EmployeeFormModal
@@ -138,6 +144,12 @@ export function EmployeesPage() {
         onSubmit={handleSubmit}
         onClose={closeModal}
         isSubmitting={isSubmitting}
+      />
+
+      <EmployeeDetailModal
+        open={!!detailEmployee}
+        employee={detailEmployee}
+        onClose={() => setDetailEmployee(null)}
       />
 
       <Modal

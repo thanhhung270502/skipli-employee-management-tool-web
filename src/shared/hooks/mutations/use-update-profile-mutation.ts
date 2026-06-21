@@ -2,10 +2,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { axiosInstance } from "@/common/lib";
 import { API_UPDATE_PROFILE } from "@/common/models/employee";
-import type {
-  UpdateProfileRequest,
-  UpdateProfileResponse,
-} from "@/common/models/employee";
+import type { UpdateProfileRequest, UpdateProfileResponse } from "@/common/models/employee";
 
 export const useUpdateProfileMutation = () =>
   useMutation<UpdateProfileResponse, Error, UpdateProfileRequest>({

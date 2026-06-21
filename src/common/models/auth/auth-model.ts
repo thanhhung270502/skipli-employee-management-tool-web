@@ -67,3 +67,14 @@ export interface SetupAccountRequest {
 export interface SetupAccountResponse {
   message: string;
 }
+
+export interface EmployeeLoginUsernameRequest {
+  username: string;
+  password: string;
+}
+
+export interface EmployeeLoginUsernameResponse {
+  token: string;
+  role: EUserRole;
+  employee: EmployeeObject;
+}

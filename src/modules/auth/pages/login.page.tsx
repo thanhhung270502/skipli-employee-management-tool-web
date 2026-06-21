@@ -101,7 +101,7 @@ export function LoginPage() {
                 <Button
                   variant="custom"
                   onClick={goBack}
-                  className="mb-4 flex cursor-pointer items-center gap-1.5 border-none bg-transparent text-[13px] text-brand-primary-light"
+                  className="text-brand-primary-light mb-4 flex cursor-pointer items-center gap-1.5 border-none bg-transparent text-[13px]"
                 >
                   ← Back
                 </Button>
@@ -149,14 +149,12 @@ export function LoginPage() {
                         type="button"
                         onClick={() =>
                           phoneMethods.handleSubmit(() =>
-                            handleSendOtp(
-                              new Event("submit") as unknown as React.FormEvent
-                            )
+                            handleSendOtp(new Event("submit") as unknown as React.FormEvent)
                           )()
                         }
                         loading={loading}
                         variant="custom"
-                        className="cursor-pointer border-none bg-transparent text-[13px] text-brand-primary-light"
+                        className="text-brand-primary-light cursor-pointer border-none bg-transparent text-[13px]"
                       >
                         Resend OTP
                       </Button>

@@ -43,7 +43,7 @@ export const useProfileForm = () => {
       })
       .catch(() => toast.error("Failed to load profile"))
       .finally(() => setLoading(false));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onSubmit = methods.handleSubmit(async (data) => {

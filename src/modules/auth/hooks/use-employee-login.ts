@@ -6,10 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { axiosInstance, setUser, isLoggedIn, isEmployee } from "@/common/lib";
-import {
-  API_EMPLOYEE_LOGIN_EMAIL,
-  API_EMPLOYEE_VALIDATE_CODE,
-} from "@/common/models/auth";
+import { API_EMPLOYEE_LOGIN_EMAIL, API_EMPLOYEE_VALIDATE_CODE } from "@/common/models/auth";
 import type {
   EmployeeLoginEmailResponse,
   EmployeeValidateCodeResponse,
@@ -54,7 +51,7 @@ export const useEmployeeLogin = () => {
     try {
       await axiosInstance.post<EmployeeLoginEmailResponse>(
         API_EMPLOYEE_LOGIN_EMAIL.buildUrlPath(),
-        { email: data.email },
+        { email: data.email }
       );
       setEmailState(data.email);
       toast.success("OTP sent to your email!");
@@ -84,10 +81,7 @@ export const useEmployeeLogin = () => {
   };
 
   const handleOtpPaste = (e: React.ClipboardEvent) => {
-    const pasted = e.clipboardData
-      .getData("text")
-      .replace(/\D/g, "")
-      .slice(0, 6);
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
     if (pasted.length === 6) {
       setOtp(pasted.split(""));
       otpRefs.current[5]?.focus();
@@ -106,7 +100,7 @@ export const useEmployeeLogin = () => {
     try {
       const res = await axiosInstance.post<EmployeeValidateCodeResponse>(
         API_EMPLOYEE_VALIDATE_CODE.buildUrlPath(),
-        { email, accessCode: code },
+        { email, accessCode: code }
       );
       const { token, role, employee } = res.data;
       setUser({ token, role: role as EUserRole, email, employee });

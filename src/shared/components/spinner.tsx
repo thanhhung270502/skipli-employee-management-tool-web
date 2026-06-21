@@ -29,7 +29,7 @@ export function PageLoading({ className, height = "h-[300px]", children }: PageL
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-4 text-brand-primary-light",
+        "text-brand-primary-light flex flex-col items-center justify-center gap-4",
         height,
         className
       )}

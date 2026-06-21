@@ -10,15 +10,15 @@ type DividerTextProps = {
 export function DividerText({ children, className }: DividerTextProps) {
   return (
     <div className={cn("my-5 flex items-center gap-3", className)}>
-      <span className="h-px flex-1 bg-brand-primary" />
+      <span className="bg-brand-primary h-px flex-1" />
       <Typography variant="caption" color="muted">
         {children}
       </Typography>
-      <span className="h-px flex-1 bg-brand-primary" />
+      <span className="bg-brand-primary h-px flex-1" />
     </div>
   );
 }
 
 export function Divider({ className }: { className?: string }) {
-  return <hr className={cn("my-6 border-0 border-t border-brand-primary", className)} />;
+  return <hr className={cn("border-brand-primary my-6 border-0 border-t", className)} />;
 }

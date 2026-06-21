@@ -33,4 +33,3 @@ export const formatToInputDate = (ts: unknown): string => {
   if (!date) return "";
   return format(date, "yyyy-MM-dd");
 };
-

@@ -7,6 +7,7 @@ import {
   useQueryEmployees,
   useCreateTaskMutation,
   useUpdateTaskMutation,
+  useTaskSocketSync,
 } from "@/shared/hooks";
 import { Button, EmptyState, PageHeader, Skeleton, TaskListSkeleton } from "@/shared/components";
 import { formatToInputDate } from "@/shared/utils";
@@ -15,6 +16,7 @@ import { TaskCard, TaskFormModal } from "../components";
 import type { TaskObject } from "@/common/models/task";
 
 export function TasksPage() {
+  useTaskSocketSync();
   const { data: taskData, isLoading: tasksLoading } = useQueryAllTasks();
   const { data: empData } = useQueryEmployees();
   const createTaskMutation = useCreateTaskMutation();

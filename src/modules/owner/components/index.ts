@@ -5,3 +5,4 @@ export * from "./employee-form-modal";
 export * from "./employee-table";
 export * from "./task-form-modal";
 export * from "./task-card";
+export * from "./employee-detail-modal";

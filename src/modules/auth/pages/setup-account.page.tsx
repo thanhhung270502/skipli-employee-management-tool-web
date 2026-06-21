@@ -18,15 +18,8 @@ import {
 } from "@/shared/components";
 
 function SetupAccountContent() {
-  const {
-    loading,
-    error,
-    employeeInfo,
-    methods,
-    onSubmit,
-    isSubmitting,
-    rootError,
-  } = useSetupAccount();
+  const { loading, error, employeeInfo, methods, onSubmit, isSubmitting, rootError } =
+    useSetupAccount();
 
   if (loading) {
     return (
@@ -82,10 +75,7 @@ function SetupAccountContent() {
                 <form onSubmit={onSubmit}>
                   {(rootError || error) && <Alert>{rootError ?? error}</Alert>}
 
-                  <FormField
-                    label="Username"
-                    error={methods.formState.errors.username?.message}
-                  >
+                  <FormField label="Username" error={methods.formState.errors.username?.message}>
                     <Input
                       type="text"
                       placeholder="Choose a username"
@@ -94,10 +84,7 @@ function SetupAccountContent() {
                     />
                   </FormField>
 
-                  <FormField
-                    label="Password"
-                    error={methods.formState.errors.password?.message}
-                  >
+                  <FormField label="Password" error={methods.formState.errors.password?.message}>
                     <Input
                       type="password"
                       placeholder="At least 8 characters"

@@ -1,3 +1,9 @@
+export interface WorkSchedule {
+  days: string[];
+  startTime: string;
+  endTime: string;
+}
+
 export interface EmployeeRow {
   id: string;
   name: string;
@@ -17,6 +23,7 @@ export interface EmployeeObject {
   department: string;
   role: string;
   isSetup: boolean;
+  workSchedule?: WorkSchedule | null;
   createdAt: string;
 }
 
@@ -26,6 +33,7 @@ export interface CreateEmployeeRequest {
   department: string;
   phone?: string;
   role?: string;
+  workSchedule?: WorkSchedule | null;
 }
 export interface CreateEmployeeResponse {
   employeeId: string;
@@ -39,6 +47,7 @@ export interface UpdateEmployeeRequest {
   phone?: string;
   department?: string;
   role?: string;
+  workSchedule?: WorkSchedule | null;
 }
 export interface UpdateEmployeeResponse {
   message: string;

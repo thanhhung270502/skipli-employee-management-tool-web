@@ -22,7 +22,7 @@ export function FormField({ label, hint, error, className, children }: FormField
           as="label"
           variant="caption"
           color="muted"
-          className="mb-2 block font-semibold uppercase tracking-wide"
+          className="mb-2 block font-semibold tracking-wide uppercase"
         >
           {label}
         </Typography>

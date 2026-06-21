@@ -72,3 +72,7 @@ export interface MarkTaskDoneResponse {
   message: string;
 }
 
+export interface MarkTaskPendingResponse {
+  success: boolean;
+  message: string;
+}

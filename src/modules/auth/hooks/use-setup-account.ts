@@ -6,14 +6,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { axiosInstance } from "@/common/lib";
-import {
-  API_EMPLOYEE_VERIFY_INVITE,
-  API_EMPLOYEE_SETUP_ACCOUNT,
-} from "@/common/models/auth";
-import type {
-  VerifyInviteResponse,
-  SetupAccountResponse,
-} from "@/common/models/auth";
+import { API_EMPLOYEE_VERIFY_INVITE, API_EMPLOYEE_SETUP_ACCOUNT } from "@/common/models/auth";
+import type { VerifyInviteResponse, SetupAccountResponse } from "@/common/models/auth";
 
 // ─── Schema ──────────────────────────────────────────────
 export const setupAccountSchema = z
@@ -52,9 +46,7 @@ export const useSetupAccount = () => {
       return;
     }
     axiosInstance
-      .get<VerifyInviteResponse>(
-        API_EMPLOYEE_VERIFY_INVITE.buildUrlPath(token)
-      )
+      .get<VerifyInviteResponse>(API_EMPLOYEE_VERIFY_INVITE.buildUrlPath(token))
       .then((res) => {
         setEmployeeInfo({ name: res.data.name, email: res.data.email });
       })
@@ -67,16 +59,13 @@ export const useSetupAccount = () => {
 
   const onSubmit = methods.handleSubmit(async (data) => {
     try {
-      await axiosInstance.post<SetupAccountResponse>(
-        API_EMPLOYEE_SETUP_ACCOUNT.buildUrlPath(),
-        {
-          inviteToken: token,
-          username: data.username,
-          password: data.password,
-        }
-      );
-      toast.success("Account setup complete! Please log in.");
-      router.push("/employee-login");
+      await axiosInstance.post<SetupAccountResponse>(API_EMPLOYEE_SETUP_ACCOUNT.buildUrlPath(), {
+        inviteToken: token,
+        username: data.username,
+        password: data.password,
+      });
+      toast.success("Account setup complete! Please log in with your credentials.");
+      router.push("/employee-login?mode=password");
     } catch (err: unknown) {
       const e = err as { response?: { data?: { message?: string } } };
       methods.setError("root", {

@@ -11,12 +11,12 @@ export function AuthPage({ children, className }: AuthPageProps) {
   return (
     <div
       className={cn(
-        "relative flex min-h-screen items-center justify-center overflow-hidden bg-brand-primary-dark p-6",
+        "bg-brand-primary-dark relative flex min-h-screen items-center justify-center overflow-hidden p-6",
         className
       )}
     >
-      <div className="pointer-events-none absolute -top-50 -right-50 size-[500px] rounded-full bg-brand-primary/20 blur-[100px]" />
-      <div className="pointer-events-none absolute -bottom-38 -left-38 size-[400px] rounded-full bg-brand-primary-light/10 blur-[100px]" />
+      <div className="bg-brand-primary/20 pointer-events-none absolute -top-50 -right-50 size-[500px] rounded-full blur-[100px]" />
+      <div className="bg-brand-primary-light/10 pointer-events-none absolute -bottom-38 -left-38 size-[400px] rounded-full blur-[100px]" />
       {children}
     </div>
   );
@@ -31,7 +31,7 @@ export function AuthCard({ children, className }: AuthCardProps) {
   return (
     <div
       className={cn(
-        "relative z-1 w-full max-w-[440px] rounded-3xl border border-brand-primary bg-brand-primary-dark p-10 shadow-2xl sm:px-6 sm:py-8",
+        "border-brand-primary bg-brand-primary-dark relative z-1 w-full max-w-[440px] rounded-3xl border p-10 shadow-2xl sm:px-6 sm:py-8",
         className
       )}
     >

@@ -1,17 +1,17 @@
 "use client";
 import { motion } from "framer-motion";
-import { CheckCircle, Clock, Calendar } from "lucide-react";
+import { CheckCircle, Clock, Calendar, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import type { TaskObject } from "@/common/models/task";
-import { Badge, Button, Card, Typography } from "@/shared/components";
+import { ETaskStatus } from "@/common/models/task";
+import { Badge, Card, Typography } from "@/shared/components";
 import { cn } from "@/shared/utils";
 
 interface EmployeeTaskCardProps {
   task: TaskObject;
   index: number;
   isUpdating: boolean;
-  onStartTask: (id: string) => void;
-  onMarkDone: (id: string) => void;
+  onStatusChange: (id: string, status: ETaskStatus) => void;
 }
 
 const getDate = (ts: unknown): Date | null => {
@@ -41,77 +41,63 @@ const getDate = (ts: unknown): Date | null => {
   return null;
 };
 
+const STATUS_OPTIONS: { value: ETaskStatus; label: string }[] = [
+  { value: ETaskStatus.PENDING, label: "Pending" },
+  { value: ETaskStatus.IN_PROGRESS, label: "In Progress" },
+  { value: ETaskStatus.DONE, label: "Done" },
+];
+
+const statusSelectStyle: Record<ETaskStatus, string> = {
+  [ETaskStatus.PENDING]: "border-warning/60 bg-warning/10 text-warning focus:ring-warning/40",
+  [ETaskStatus.IN_PROGRESS]: "border-info/60 bg-info/10 text-info focus:ring-info/40",
+  [ETaskStatus.DONE]: "border-success/60 bg-success/10 text-success focus:ring-success/40",
+};
+
 export function EmployeeTaskCard({
   task,
   index,
   isUpdating,
-  onStartTask,
-  onMarkDone,
+  onStatusChange,
 }: EmployeeTaskCardProps) {
   const dueDate = getDate(task.dueDate);
   const completedAt = getDate(task.completedAt);
-
-  if (task.status === "done") {
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: index * 0.04 }}
-      >
-        <Card className="flex items-start gap-4 opacity-70">
-          <div className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-success">
-            <CheckCircle size={12} className="text-white" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="mb-1 flex flex-wrap items-center gap-2.5">
-              <Typography variant="small" color="muted" className="font-semibold line-through">
-                {task.title}
-              </Typography>
-              <Badge
-                variant={
-                  task.priority === "high"
-                    ? "danger"
-                    : task.priority === "medium"
-                      ? "purple"
-                      : "neutral"
-                }
-                className="capitalize opacity-70"
-              >
-                {task.priority || "medium"}
-              </Badge>
-            </div>
-            {completedAt && (
-              <Typography variant="caption" color="success">
-                ✓ Completed {format(completedAt, "MMM d, yyyy")}
-              </Typography>
-            )}
-          </div>
-          <Badge variant="success">Done</Badge>
-        </Card>
-      </motion.div>
-    );
-  }
-
+  const isDone = task.status === "done";
   const isInProgress = task.status === "in_progress";
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.06 }}
+      transition={{ delay: index * 0.05 }}
     >
-      <Card className="flex items-start gap-4">
+      <Card
+        className={cn(
+          "flex items-start gap-4 transition-opacity",
+          isDone && "opacity-70 hover:opacity-100"
+        )}
+      >
+        {/* Status icon */}
         <div
           className={cn(
-            "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border-2 bg-transparent",
-            isInProgress ? "border-blue" : "border-warning"
+            "mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full",
+            isDone ? "bg-success" : isInProgress ? "bg-info" : "bg-warning"
           )}
         >
-          <Clock size={10} className={isInProgress ? "text-blue" : "text-warning"} />
+          {isDone ? (
+            <CheckCircle size={12} className="text-white" />
+          ) : (
+            <Clock size={12} className="text-white" />
+          )}
         </div>
+
+        {/* Content */}
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex flex-wrap items-center gap-2.5">
-            <Typography variant="small" color="primary" className="font-semibold">
+            <Typography
+              variant="small"
+              color={isDone ? "muted" : "primary"}
+              className={cn("font-semibold", isDone && "line-through")}
+            >
               {task.title}
             </Typography>
             <Badge
@@ -122,11 +108,10 @@ export function EmployeeTaskCard({
                     ? "purple"
                     : "neutral"
               }
-              className="capitalize"
+              className={cn("capitalize", isDone && "opacity-70")}
             >
               {task.priority || "medium"}
             </Badge>
-            {isInProgress && <Badge variant="info">In Progress</Badge>}
           </div>
 
           {task.description && (
@@ -134,36 +119,52 @@ export function EmployeeTaskCard({
               {task.description}
             </Typography>
           )}
-          {dueDate && (
-            <Typography variant="caption" color="muted" className="flex items-center gap-1">
-              <Calendar size={11} />
-              Due {format(dueDate, "MMM d, yyyy")}
-            </Typography>
+
+          <div className="flex flex-wrap items-center gap-3">
+            {dueDate && (
+              <Typography variant="caption" color="muted" className="flex items-center gap-1">
+                <Calendar size={11} />
+                Due {format(dueDate, "MMM d, yyyy")}
+              </Typography>
+            )}
+            {completedAt && isDone && (
+              <Typography variant="caption" color="success">
+                ✓ Completed {format(completedAt, "MMM d, yyyy")}
+              </Typography>
+            )}
+          </div>
+        </div>
+
+        {/* Status select */}
+        <div className="relative shrink-0">
+          {isUpdating ? (
+            <div
+              className={cn(
+                "flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium",
+                statusSelectStyle[task.status as ETaskStatus]
+              )}
+            >
+              <Loader2 size={11} className="animate-spin" />
+              Updating...
+            </div>
+          ) : (
+            <select
+              value={task.status}
+              disabled={isUpdating}
+              onChange={(e) => onStatusChange(task.id, e.target.value as ETaskStatus)}
+              className={cn(
+                "cursor-pointer appearance-none rounded-md border px-2.5 py-1.5 pr-7 text-xs font-semibold transition-all outline-none focus:ring-2",
+                statusSelectStyle[task.status as ETaskStatus]
+              )}
+            >
+              {STATUS_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
           )}
         </div>
-        {isInProgress ? (
-          <Button
-            variant="success"
-            size="sm"
-            className="w-auto shrink-0"
-            onClick={() => onMarkDone(task.id)}
-            loading={isUpdating}
-            loadingText="Updating..."
-          >
-            <CheckCircle size={14} /> Complete
-          </Button>
-        ) : (
-          <Button
-            variant="secondary"
-            size="sm"
-            className="w-auto shrink-0"
-            onClick={() => onStartTask(task.id)}
-            loading={isUpdating}
-            loadingText="Updating..."
-          >
-            Start Task
-          </Button>
-        )}
       </Card>
     </motion.div>
   );

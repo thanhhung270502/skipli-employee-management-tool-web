@@ -13,10 +13,7 @@ import type {
   UpdateProfileResponse,
 } from "./employee-model";
 
-export const API_GET_ALL_EMPLOYEES: APIDefinition<
-  undefined,
-  GetAllEmployeesResponse
-> = {
+export const API_GET_ALL_EMPLOYEES: APIDefinition<undefined, GetAllEmployeesResponse> = {
   method: APIMethod.GET,
   baseUrl: APIBaseRoutes.OWNER,
   subUrl: "/employees",
@@ -25,10 +22,7 @@ export const API_GET_ALL_EMPLOYEES: APIDefinition<
   buildUrlPath: () => `${APIBaseRoutes.OWNER}/employees`,
 };
 
-export const API_GET_EMPLOYEE: APIDefinition<
-  { employeeId: string },
-  GetEmployeeResponse
-> = {
+export const API_GET_EMPLOYEE: APIDefinition<{ employeeId: string }, GetEmployeeResponse> = {
   method: APIMethod.GET,
   baseUrl: APIBaseRoutes.OWNER,
   subUrl: "/employees/:employeeId",
@@ -37,10 +31,7 @@ export const API_GET_EMPLOYEE: APIDefinition<
   buildUrlPath: (id: string) => `${APIBaseRoutes.OWNER}/employees/${id}`,
 };
 
-export const API_CREATE_EMPLOYEE: APIDefinition<
-  CreateEmployeeRequest,
-  CreateEmployeeResponse
-> = {
+export const API_CREATE_EMPLOYEE: APIDefinition<CreateEmployeeRequest, CreateEmployeeResponse> = {
   method: APIMethod.POST,
   baseUrl: APIBaseRoutes.OWNER,
   subUrl: "/employees",
@@ -49,10 +40,7 @@ export const API_CREATE_EMPLOYEE: APIDefinition<
   buildUrlPath: () => `${APIBaseRoutes.OWNER}/employees`,
 };
 
-export const API_UPDATE_EMPLOYEE: APIDefinition<
-  UpdateEmployeeRequest,
-  UpdateEmployeeResponse
-> = {
+export const API_UPDATE_EMPLOYEE: APIDefinition<UpdateEmployeeRequest, UpdateEmployeeResponse> = {
   method: APIMethod.PUT,
   baseUrl: APIBaseRoutes.OWNER,
   subUrl: "/employees/:employeeId",
@@ -61,10 +49,7 @@ export const API_UPDATE_EMPLOYEE: APIDefinition<
   buildUrlPath: (id: string) => `${APIBaseRoutes.OWNER}/employees/${id}`,
 };
 
-export const API_DELETE_EMPLOYEE: APIDefinition<
-  { employeeId: string },
-  DeleteEmployeeResponse
-> = {
+export const API_DELETE_EMPLOYEE: APIDefinition<{ employeeId: string }, DeleteEmployeeResponse> = {
   method: APIMethod.DELETE,
   baseUrl: APIBaseRoutes.OWNER,
   subUrl: "/employees/:employeeId",
@@ -82,10 +67,7 @@ export const API_GET_PROFILE: APIDefinition<undefined, GetProfileResponse> = {
   buildUrlPath: () => `${APIBaseRoutes.EMPLOYEE}/profile`,
 };
 
-export const API_UPDATE_PROFILE: APIDefinition<
-  UpdateProfileRequest,
-  UpdateProfileResponse
-> = {
+export const API_UPDATE_PROFILE: APIDefinition<UpdateProfileRequest, UpdateProfileResponse> = {
   method: APIMethod.PUT,
   baseUrl: APIBaseRoutes.EMPLOYEE,
   subUrl: "/profile",

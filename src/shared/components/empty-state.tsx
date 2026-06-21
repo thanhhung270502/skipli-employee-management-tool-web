@@ -13,10 +13,7 @@ type EmptyStateProps = {
 export function EmptyState({ icon, title, description, action, className }: EmptyStateProps) {
   return (
     <div
-      className={cn(
-        "flex flex-col items-center justify-center px-6 py-15 text-center",
-        className
-      )}
+      className={cn("flex flex-col items-center justify-center px-6 py-15 text-center", className)}
     >
       {icon && <div className="mb-4 text-5xl">{icon}</div>}
       <Typography variant="h5" color="primary" className="mb-2">

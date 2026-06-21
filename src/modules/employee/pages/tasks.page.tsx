@@ -5,6 +5,8 @@ import {
   useQueryMyTasks,
   useMarkTaskDoneMutation,
   useMarkTaskInProgressMutation,
+  useMarkTaskPendingMutation,
+  useTaskSocketSync,
 } from "@/shared/hooks";
 import {
   EmptyState,
@@ -14,11 +16,15 @@ import {
   Typography,
 } from "@/shared/components";
 import { EmployeeTaskCard } from "../components";
+import type { TaskObject } from "@/common/models/task";
+import { ETaskStatus } from "@/common/models/task";
 
 export function EmployeeTasksPage() {
+  useTaskSocketSync();
   const { data, isLoading } = useQueryMyTasks();
   const markDoneMutation = useMarkTaskDoneMutation();
   const markInProgressMutation = useMarkTaskInProgressMutation();
+  const markPendingMutation = useMarkTaskPendingMutation();
   const [updatingTaskId, setUpdatingTaskId] = useState<string | null>(null);
 
   const tasks = data?.tasks ?? [];
@@ -26,27 +32,22 @@ export function EmployeeTasksPage() {
   const inProgress = tasks.filter((t) => t.status === "in_progress");
   const done = tasks.filter((t) => t.status === "done");
 
-  const handleStartTask = async (taskId: string) => {
+  const handleStatusChange = async (taskId: string, newStatus: ETaskStatus) => {
     setUpdatingTaskId(taskId);
     try {
-      await markInProgressMutation.mutateAsync(taskId);
-      toast.success("Task started! Let's get to work! 💪");
+      if (newStatus === ETaskStatus.IN_PROGRESS) {
+        await markInProgressMutation.mutateAsync(taskId);
+        toast.success("Task started! Let's get to work! 💪");
+      } else if (newStatus === ETaskStatus.DONE) {
+        await markDoneMutation.mutateAsync(taskId);
+        toast.success("Task marked as done! 🎉");
+      } else if (newStatus === ETaskStatus.PENDING) {
+        await markPendingMutation.mutateAsync(taskId);
+        toast.success("Task moved back to pending.");
+      }
     } catch (err: unknown) {
       const e = err as { response?: { data?: { message?: string } } };
-      toast.error(e.response?.data?.message ?? "Failed to start task");
-    } finally {
-      setUpdatingTaskId(null);
-    }
-  };
-
-  const handleMarkDone = async (taskId: string) => {
-    setUpdatingTaskId(taskId);
-    try {
-      await markDoneMutation.mutateAsync(taskId);
-      toast.success("Task marked as done! 🎉");
-    } catch (err: unknown) {
-      const e = err as { response?: { data?: { message?: string } } };
-      toast.error(e.response?.data?.message ?? "Failed to complete task");
+      toast.error(e.response?.data?.message ?? "Failed to update task status");
     } finally {
       setUpdatingTaskId(null);
     }
@@ -80,66 +81,60 @@ export function EmployeeTasksPage() {
       ) : (
         <div>
           {pending.length > 0 && (
-            <div className="mb-8">
-              <Typography variant="overline" color="muted" className="mb-4">
-                Pending ({pending.length})
-              </Typography>
-              <div className="flex flex-col gap-3">
-                {pending.map((task, i) => (
-                  <EmployeeTaskCard
-                    key={task.id}
-                    task={task}
-                    index={i}
-                    isUpdating={updatingTaskId === task.id}
-                    onStartTask={handleStartTask}
-                    onMarkDone={handleMarkDone}
-                  />
-                ))}
-              </div>
-            </div>
+            <TaskElement
+              title="Pending"
+              tasks={pending}
+              updatingTaskId={updatingTaskId}
+              onStatusChange={handleStatusChange}
+            />
           )}
 
           {inProgress.length > 0 && (
-            <div className="mb-8">
-              <Typography variant="overline" color="accent" className="mb-4 text-blue">
-                In Progress ({inProgress.length})
-              </Typography>
-              <div className="flex flex-col gap-3">
-                {inProgress.map((task, i) => (
-                  <EmployeeTaskCard
-                    key={task.id}
-                    task={task}
-                    index={i}
-                    isUpdating={updatingTaskId === task.id}
-                    onStartTask={handleStartTask}
-                    onMarkDone={handleMarkDone}
-                  />
-                ))}
-              </div>
-            </div>
+            <TaskElement
+              title="In Progress"
+              tasks={inProgress}
+              updatingTaskId={updatingTaskId}
+              onStatusChange={handleStatusChange}
+            />
           )}
 
           {done.length > 0 && (
-            <div>
-              <Typography variant="overline" color="success" className="mb-4">
-                Completed ({done.length})
-              </Typography>
-              <div className="flex flex-col gap-3">
-                {done.map((task, i) => (
-                  <EmployeeTaskCard
-                    key={task.id}
-                    task={task}
-                    index={i}
-                    isUpdating={false}
-                    onStartTask={handleStartTask}
-                    onMarkDone={handleMarkDone}
-                  />
-                ))}
-              </div>
-            </div>
+            <TaskElement
+              title="Completed"
+              tasks={done}
+              updatingTaskId={updatingTaskId}
+              onStatusChange={handleStatusChange}
+            />
           )}
         </div>
       )}
     </div>
   );
 }
+
+type TaskElementProps = {
+  title: string;
+  tasks: TaskObject[];
+  updatingTaskId: string | null;
+  onStatusChange: (id: string, status: ETaskStatus) => void;
+};
+const TaskElement = ({ title, tasks, updatingTaskId, onStatusChange }: TaskElementProps) => {
+  return (
+    <div className="mb-8 flex flex-col gap-2">
+      <Typography variant="overline" color="default">
+        {title} ({tasks.length})
+      </Typography>
+      <div className="flex flex-col gap-3">
+        {tasks.map((task, i) => (
+          <EmployeeTaskCard
+            key={task.id}
+            task={task}
+            index={i}
+            isUpdating={updatingTaskId === task.id}
+            onStatusChange={onStatusChange}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};

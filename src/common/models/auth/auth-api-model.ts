@@ -12,19 +12,19 @@ import type {
   VerifyInviteResponse,
   SetupAccountRequest,
   SetupAccountResponse,
+  EmployeeLoginUsernameRequest,
+  EmployeeLoginUsernameResponse,
 } from "./auth-model";
 
-export const API_OWNER_CREATE_CODE: APIDefinition<
-  OwnerCreateCodeRequest,
-  OwnerCreateCodeResponse
-> = {
-  method: APIMethod.POST,
-  baseUrl: APIBaseRoutes.OWNER,
-  subUrl: "/create-new-access-code",
-  requestBody: {} as OwnerCreateCodeRequest,
-  responseBody: {} as OwnerCreateCodeResponse,
-  buildUrlPath: () => `${APIBaseRoutes.OWNER}/create-new-access-code`,
-};
+export const API_OWNER_CREATE_CODE: APIDefinition<OwnerCreateCodeRequest, OwnerCreateCodeResponse> =
+  {
+    method: APIMethod.POST,
+    baseUrl: APIBaseRoutes.OWNER,
+    subUrl: "/create-new-access-code",
+    requestBody: {} as OwnerCreateCodeRequest,
+    responseBody: {} as OwnerCreateCodeResponse,
+    buildUrlPath: () => `${APIBaseRoutes.OWNER}/create-new-access-code`,
+  };
 
 export const API_OWNER_VALIDATE_CODE: APIDefinition<
   OwnerValidateCodeRequest,
@@ -62,27 +62,33 @@ export const API_EMPLOYEE_VALIDATE_CODE: APIDefinition<
   buildUrlPath: () => `${APIBaseRoutes.EMPLOYEE}/validate-access-code`,
 };
 
-export const API_EMPLOYEE_VERIFY_INVITE: APIDefinition<
-  undefined,
-  VerifyInviteResponse
-> = {
+export const API_EMPLOYEE_VERIFY_INVITE: APIDefinition<undefined, VerifyInviteResponse> = {
   method: APIMethod.GET,
   baseUrl: APIBaseRoutes.EMPLOYEE,
   subUrl: "/verify-invite/:token",
   requestBody: undefined,
   responseBody: {} as VerifyInviteResponse,
-  buildUrlPath: (token: string) =>
-    `${APIBaseRoutes.EMPLOYEE}/verify-invite/${token}`,
+  buildUrlPath: (token: string) => `${APIBaseRoutes.EMPLOYEE}/verify-invite/${token}`,
 };
 
-export const API_EMPLOYEE_SETUP_ACCOUNT: APIDefinition<
-  SetupAccountRequest,
-  SetupAccountResponse
+export const API_EMPLOYEE_SETUP_ACCOUNT: APIDefinition<SetupAccountRequest, SetupAccountResponse> =
+  {
+    method: APIMethod.POST,
+    baseUrl: APIBaseRoutes.EMPLOYEE,
+    subUrl: "/setup-account",
+    requestBody: {} as SetupAccountRequest,
+    responseBody: {} as SetupAccountResponse,
+    buildUrlPath: () => `${APIBaseRoutes.EMPLOYEE}/setup-account`,
+  };
+
+export const API_EMPLOYEE_LOGIN_USERNAME: APIDefinition<
+  EmployeeLoginUsernameRequest,
+  EmployeeLoginUsernameResponse
 > = {
   method: APIMethod.POST,
   baseUrl: APIBaseRoutes.EMPLOYEE,
-  subUrl: "/setup-account",
-  requestBody: {} as SetupAccountRequest,
-  responseBody: {} as SetupAccountResponse,
-  buildUrlPath: () => `${APIBaseRoutes.EMPLOYEE}/setup-account`,
+  subUrl: "/login-username",
+  requestBody: {} as EmployeeLoginUsernameRequest,
+  responseBody: {} as EmployeeLoginUsernameResponse,
+  buildUrlPath: () => `${APIBaseRoutes.EMPLOYEE}/login-username`,
 };

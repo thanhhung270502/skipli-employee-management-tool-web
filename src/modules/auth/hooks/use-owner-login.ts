@@ -6,14 +6,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { axiosInstance, setUser, isLoggedIn, isOwner } from "@/common/lib";
-import {
-  API_OWNER_CREATE_CODE,
-  API_OWNER_VALIDATE_CODE,
-} from "@/common/models/auth";
-import type {
-  OwnerCreateCodeResponse,
-  OwnerValidateCodeResponse,
-} from "@/common/models/auth";
+import { API_OWNER_CREATE_CODE, API_OWNER_VALIDATE_CODE } from "@/common/models/auth";
+import type { OwnerCreateCodeResponse, OwnerValidateCodeResponse } from "@/common/models/auth";
 import type { EUserRole } from "@/common/models/auth";
 
 // ─── Schemas ────────────────────────────────────────────
@@ -57,10 +51,9 @@ export const useOwnerLogin = () => {
     setError("");
     setLoading(true);
     try {
-      await axiosInstance.post<OwnerCreateCodeResponse>(
-        API_OWNER_CREATE_CODE.buildUrlPath(),
-        { phoneNumber: data.phoneNumber },
-      );
+      await axiosInstance.post<OwnerCreateCodeResponse>(API_OWNER_CREATE_CODE.buildUrlPath(), {
+        phoneNumber: data.phoneNumber,
+      });
       setPhoneNumber(data.phoneNumber);
       toast.success("OTP sent to your phone!");
       setStep("otp");
@@ -89,10 +82,7 @@ export const useOwnerLogin = () => {
   };
 
   const handleOtpPaste = (e: React.ClipboardEvent) => {
-    const pasted = e.clipboardData
-      .getData("text")
-      .replace(/\D/g, "")
-      .slice(0, 6);
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
     if (pasted.length === 6) {
       setOtp(pasted.split(""));
       otpRefs.current[5]?.focus();
@@ -111,7 +101,7 @@ export const useOwnerLogin = () => {
     try {
       const res = await axiosInstance.post<OwnerValidateCodeResponse>(
         API_OWNER_VALIDATE_CODE.buildUrlPath(),
-        { phoneNumber, accessCode: code },
+        { phoneNumber, accessCode: code }
       );
       const { token, role } = res.data;
       setUser({ token, role: role as EUserRole, phoneNumber });

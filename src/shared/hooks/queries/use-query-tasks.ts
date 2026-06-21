@@ -7,7 +7,7 @@ import type { GetAllTasksResponse, GetMyTasksResponse } from "@/common/models/ta
 export const ALL_TASKS_QUERY_KEY = ["tasks", "all"] as const;
 export const MY_TASKS_QUERY_KEY = ["tasks", "mine"] as const;
 
-const TASK_POLL_INTERVAL_MS = 5000;
+const TASK_POLL_INTERVAL_MS = 30000;
 
 export const useQueryAllTasks = () =>
   useQuery<GetAllTasksResponse>({
@@ -27,4 +27,16 @@ export const useQueryMyTasks = () =>
       return res.data ?? { tasks: [] };
     },
     refetchInterval: TASK_POLL_INTERVAL_MS,
+  });
+
+export const useQueryEmployeeTasks = (employeeId: string, enabled: boolean) =>
+  useQuery<GetMyTasksResponse>({
+    queryKey: ["employees", employeeId, "tasks"],
+    queryFn: async () => {
+      const res = await axiosInstance.get<GetMyTasksResponse>(
+        `/api/owner/employees/${employeeId}/tasks`
+      );
+      return res.data ?? { tasks: [] };
+    },
+    enabled: enabled && !!employeeId,
   });

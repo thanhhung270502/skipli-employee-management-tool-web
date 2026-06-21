@@ -20,8 +20,7 @@ export interface LoggerConfig {
 }
 
 // Datadog HTTP log intake (US5). Only active server-side when DD_API_KEY is set.
-const DD_INTAKE_URL =
-  "https://http-intake.logs.us5.datadoghq.com/api/v2/logs";
+const DD_INTAKE_URL = "https://http-intake.logs.us5.datadoghq.com/api/v2/logs";
 
 class Logger {
   private config: LoggerConfig;
@@ -51,7 +50,7 @@ class Logger {
     } else {
       // Also write to stdout so Railway's log viewer always has the line.
       console[level === LogLevel.ERROR ? "error" : level === LogLevel.WARN ? "warn" : "log"](
-        JSON.stringify({ level, message, ...context }),
+        JSON.stringify({ level, message, ...context })
       );
       this.sendToDatadog(level, message, context);
     }
@@ -67,20 +66,14 @@ class Logger {
    *   without the flag, or client-side hydration).
    * - Errors are swallowed so a Datadog outage never surfaces to users.
    */
-  private sendToDatadog(
-    level: LogLevel,
-    message: string,
-    context?: LogContext,
-  ): void {
+  private sendToDatadog(level: LogLevel, message: string, context?: LogContext): void {
     if (typeof window !== "undefined") return;
 
     const apiKey = process.env.DD_API_KEY;
     if (!apiKey) return;
 
     const env =
-      process.env.RAILWAY_ENVIRONMENT_NAME ??
-      process.env.RAILWAY_ENVIRONMENT ??
-      "unknown";
+      process.env.RAILWAY_ENVIRONMENT_NAME ?? process.env.RAILWAY_ENVIRONMENT ?? "unknown";
 
     const payload = JSON.stringify([
       {
