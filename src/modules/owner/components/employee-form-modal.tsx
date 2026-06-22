@@ -110,9 +110,9 @@ function EmployeeFormFields({ editEmployee }: { editEmployee: EmployeeObject | n
         </FormField>
       </div>
 
-      <FormField label="Job Role">
+      {/* <FormField label="Job Role">
         <Input placeholder="Software Engineer" {...register("role")} />
-      </FormField>
+      </FormField> */}
 
       <div className="mt-4 border-t border-white/10 pt-4">
         <label className="text-brand-primary-light mb-3 flex cursor-pointer items-center gap-2 text-sm font-medium select-none">
